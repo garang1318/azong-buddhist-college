@@ -661,9 +661,28 @@
                 
                 if (response.ok) {
                     localStorage.setItem('azong_config', JSON.stringify(config));
-                    showMessage('正在清除CDN缓存...', 'loading');
-                    try { await fetch('https://purge.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json', { method: 'GET' }); } catch(e) {}
-                    showMessage('✅ 配置已保存！前台刷新页面即可看到最新内容。', 'success');
+                    
+                    showMessage('正在同步版本号...', 'loading');
+                    try {
+                        const verContent = btoa(String(Date.now()));
+                        let verSha = null;
+                        try {
+                            const verResp = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/ver.txt`, {
+                                headers: { 'Authorization': `token ${githubToken}` }
+                            });
+                            if (verResp.ok) verSha = (await verResp.json()).sha;
+                        } catch(e) {}
+                        const verBody = verSha
+                            ? JSON.stringify({ message: 'Update version', content: verContent, sha: verSha })
+                            : JSON.stringify({ message: 'Create version file', content: verContent });
+                        await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/ver.txt`, {
+                            method: 'PUT',
+                            headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
+                            body: verBody
+                        });
+                    } catch(e) { console.log('ver update failed:', e); }
+                    
+                    showMessage('✅ 配置已保存！前台刷新即可看到最新内容。', 'success');
                 } else {
                     const error = await response.json();
                     if (response.status === 401) {
