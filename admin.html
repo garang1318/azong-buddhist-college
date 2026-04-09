@@ -405,10 +405,8 @@
             document.getElementById('repoOwner').value = repoOwner;
             document.getElementById('repoName').value = repoName;
             
-            // 如果已保存过 Token，自动折叠认证区域
-            if (localStorage.getItem('token_saved') === 'true') {
-                collapseTokenSection();
-            }
+            // 默认折叠认证区域（无论是否保存过Token）
+            collapseTokenSection();
             
             loadConfig();
         });
