@@ -195,6 +195,37 @@
             border: 1px solid #ffeaa7;
         }
         
+        .token-section.collapsed {
+            background: #e8f5e9;
+            border: 1px solid #4caf50;
+        }
+        
+        .token-section.collapsed .token-content {
+            display: none;
+        }
+        
+        .token-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .token-header h2 {
+            margin: 0;
+            border: none;
+        }
+        
+        .token-status {
+            color: #4caf50;
+            font-size: 0.9em;
+        }
+        
+        .toggle-icon {
+            font-size: 1.2em;
+            color: #666;
+        }
+        
         .info-box {
             background: #f0f8ff;
             padding: 20px;
@@ -241,26 +272,34 @@
         <div id="message" class="message"></div>
         
         <!-- GitHub Token 设置 -->
-        <div class="section token-section">
-            <h2>GitHub 认证设置</h2>
-            <div class="form-group">
-                <label>GitHub Token *</label>
-                <input type="password" id="githubToken" placeholder="请输入 GitHub Personal Access Token">
-                <p class="hint">
-                    用于直接更新远程配置文件。获取方式：
-                    <a href="https://github.com/settings/tokens" target="_blank">https://github.com/settings/tokens</a>
-                    → Generate new token (classic) → 勾选 'repo' 权限
-                </p>
+        <div class="section token-section" id="tokenSection">
+            <div class="token-header" onclick="toggleTokenSection()">
+                <h2>GitHub 认证设置</h2>
+                <div>
+                    <span class="token-status" id="tokenStatus"></span>
+                    <span class="toggle-icon" id="toggleIcon">▼</span>
+                </div>
             </div>
-            <div class="form-group">
-                <label>仓库所有者</label>
-                <input type="text" id="repoOwner" value="garang1318" placeholder="如：garang1318">
+            <div class="token-content" id="tokenContent">
+                <div class="form-group">
+                    <label>GitHub Token *</label>
+                    <input type="password" id="githubToken" placeholder="请输入 GitHub Personal Access Token">
+                    <p class="hint">
+                        用于直接更新远程配置文件。获取方式：
+                        <a href="https://github.com/settings/tokens" target="_blank">https://github.com/settings/tokens</a>
+                        → Generate new token (classic) → 勾选 'repo' 权限
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label>仓库所有者</label>
+                    <input type="text" id="repoOwner" value="garang1318" placeholder="如：garang1318">
+                </div>
+                <div class="form-group">
+                    <label>仓库名称</label>
+                    <input type="text" id="repoName" value="azong-buddhist-college" placeholder="如：azong-buddhist-college">
+                </div>
+                <button type="button" class="btn-add" onclick="saveToken()">保存认证信息</button>
             </div>
-            <div class="form-group">
-                <label>仓库名称</label>
-                <input type="text" id="repoName" value="azong-buddhist-college" placeholder="如：azong-buddhist-college">
-            </div>
-            <button type="button" class="btn-add" onclick="saveToken()">保存认证信息</button>
         </div>
         
         <div class="section">
@@ -360,13 +399,44 @@
             } else {
                 document.getElementById('githubToken').value = defaultToken;
                 localStorage.setItem('github_token', defaultToken);
+                githubToken = defaultToken;
             }
             
             document.getElementById('repoOwner').value = repoOwner;
             document.getElementById('repoName').value = repoName;
             
+            // 如果已保存过 Token，自动折叠认证区域
+            if (localStorage.getItem('token_saved') === 'true') {
+                collapseTokenSection();
+            }
+            
             loadConfig();
         });
+        
+        // 折叠/展开认证区域
+        function toggleTokenSection() {
+            const section = document.getElementById('tokenSection');
+            const content = document.getElementById('tokenContent');
+            const icon = document.getElementById('toggleIcon');
+            
+            if (section.classList.contains('collapsed')) {
+                section.classList.remove('collapsed');
+                icon.textContent = '▼';
+            } else {
+                collapseTokenSection();
+            }
+        }
+        
+        // 折叠认证区域
+        function collapseTokenSection() {
+            const section = document.getElementById('tokenSection');
+            const icon = document.getElementById('toggleIcon');
+            const status = document.getElementById('tokenStatus');
+            
+            section.classList.add('collapsed');
+            icon.textContent = '▶';
+            status.textContent = '（已保存，点击展开）';
+        }
         
         // 保存认证信息
         function saveToken() {
@@ -382,8 +452,10 @@
             localStorage.setItem('github_token', githubToken);
             localStorage.setItem('repo_owner', repoOwner);
             localStorage.setItem('repo_name', repoName);
+            localStorage.setItem('token_saved', 'true');
             
             showMessage('认证信息已保存', 'success');
+            collapseTokenSection();
         }
         
         // 加载配置
