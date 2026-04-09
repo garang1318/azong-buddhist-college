@@ -456,45 +456,78 @@
             collapseTokenSection();
         }
         
+        // 默认配置
+        const defaultConfig = {
+            title: '阿宗国际佛学院',
+            subtitle: 'AZONG INTERNATIONAL BUDDHIST ACADEMY',
+            description: '阿宗国际佛学院秉承藏传佛教殊胜法脉，定期举办各类法会，为众生祈福消灾、超度亡灵。欢迎各界善信随喜参与，共结善缘，同证菩提。您的每一分随喜都将用于法会供品、僧众供养及佛学院建设，功德无量。',
+            exchangeRate: 18.5,
+            currencyName: '尼泊尔卢比',
+            currencyCode: 'NPR',
+            items: [
+                {id: 'fahui', name: '随喜法会', sort: 1},
+                {id: 'gongdeng', name: '供灯', sort: 2},
+                {id: 'gongseng', name: '供僧', sort: 3},
+                {id: 'gongzhai', name: '供斋', sort: 4},
+                {id: 'gonghuaguo', name: '供花果', sort: 5},
+                {id: 'yangong', name: '烟供', sort: 6}
+            ],
+            contact: {
+                wechat: 'AzongCollege',
+                email: 'info@azong.edu.np',
+                address: '尼泊尔加德满都'
+            }
+        };
+
         // 加载配置
         async function loadConfig() {
             try {
-                const response = await fetch('config.json?v=' + Date.now());
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch('config.json?v=' + Date.now(), {
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                
                 config = await response.json();
+                // 保存到本地缓存（供前台使用）
+                localStorage.setItem('azong_config', JSON.stringify(config));
                 
                 // 填充表单
-                document.getElementById('title').value = config.title || '';
-                document.getElementById('subtitle').value = config.subtitle || '';
-                document.getElementById('description').value = config.description || '';
-                document.getElementById('exchangeRate').value = config.exchangeRate || '';
-                document.getElementById('currencyName').value = config.currencyName || '';
-                document.getElementById('currencyCode').value = config.currencyCode || '';
-                document.getElementById('wechat').value = config.contact?.wechat || '';
-                document.getElementById('email').value = config.contact?.email || '';
-                document.getElementById('address').value = config.contact?.address || '';
-                
+                fillForm();
                 renderItems();
             } catch (error) {
-                showMessage('加载配置失败：' + error.message, 'error');
-                // 使用默认配置
-                config = {
-                    title: '阿宗国际佛学院',
-                    subtitle: 'AZONG INTERNATIONAL BUDDHIST ACADEMY',
-                    exchangeRate: 18.5,
-                    currencyName: '尼泊尔卢比',
-                    currencyCode: 'NPR',
-                    items: [
-                        {id: 'fahui', name: '随喜法会', sort: 1},
-                        {id: 'gongdeng', name: '供灯', sort: 2},
-                        {id: 'gongseng', name: '供僧', sort: 3},
-                        {id: 'gongzhai', name: '供斋', sort: 4},
-                        {id: 'gonghuaguo', name: '供花果', sort: 5},
-                        {id: 'yangong', name: '烟供', sort: 6}
-                    ],
-                    contact: {}
-                };
+                console.error('加载配置失败：', error);
+                // 尝试使用本地缓存
+                const localConfig = localStorage.getItem('azong_config');
+                if (localConfig) {
+                    config = JSON.parse(localConfig);
+                    showMessage('已从本地缓存加载配置', 'success');
+                } else {
+                    config = JSON.parse(JSON.stringify(defaultConfig));
+                    showMessage('使用默认配置，请修改后保存', 'loading');
+                }
+                fillForm();
                 renderItems();
             }
+        }
+        
+        // 填充表单
+        function fillForm() {
+            document.getElementById('title').value = config.title || '';
+            document.getElementById('subtitle').value = config.subtitle || '';
+            document.getElementById('description').value = config.description || '';
+            document.getElementById('exchangeRate').value = config.exchangeRate || '';
+            document.getElementById('currencyName').value = config.currencyName || '';
+            document.getElementById('currencyCode').value = config.currencyCode || '';
+            document.getElementById('wechat').value = config.contact?.wechat || '';
+            document.getElementById('email').value = config.contact?.email || '';
+            document.getElementById('address').value = config.contact?.address || '';
         }
         
         // 渲染项目列表
@@ -602,7 +635,9 @@
                 });
                 
                 if (response.ok) {
-                    showMessage('配置已成功保存到 GitHub！前台页面将在1-2分钟后自动更新。', 'success');
+                    // 保存成功后，更新本地缓存
+                    localStorage.setItem('azong_config', JSON.stringify(config));
+                    showMessage('配置已成功保存到 GitHub！前台页面将使用新配置。', 'success');
                 } else {
                     const error = await response.json();
                     if (response.status === 401) {
