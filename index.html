@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阿宗国际佛学院 - 随喜法会功德</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #fff;
+            color: #333;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+
+        
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 1.8em;
+            font-weight: normal;
+            margin-bottom: 8px;
+            color: #222;
+        }
+        
+        .header .subtitle {
+            color: #666;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+        }
+        
+        .intro-section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .intro-section h2 {
+            font-size: 1.2em;
+            font-weight: normal;
+            margin-bottom: 15px;
+            color: #444;
+        }
+        
+        .intro-section p {
+            color: #555;
+            line-height: 1.8;
+        }
+        
+        .donation-section {
+            margin-bottom: 30px;
+        }
+        
+        .donation-section h2 {
+            font-size: 1.2em;
+            font-weight: normal;
+            margin-bottom: 20px;
+            color: #444;
+        }
+        
+        .total-box {
+            background: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .total-box label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        
+        .total-input-wrap {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .total-input-wrap input {
+            width: 150px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+        }
+        
+        .total-input-wrap input:focus {
+            outline: none;
+            border-color: #666;
+        }
+        
+        .total-input-wrap .equals {
+            color: #999;
+        }
+        
+        .total-input-wrap .total-npr {
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .exchange-hint {
+            color: #999;
+            font-size: 0.8em;
+            margin-top: 8px;
+        }
+        
+        .hint {
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+        
+        .donation-items {
+            margin-bottom: 20px;
+        }
+        
+        .donation-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .item-number {
+            width: 30px;
+            color: #999;
+            font-size: 0.9em;
+        }
+        
+        .item-name {
+            flex: 1;
+            color: #444;
+        }
+        
+        .item-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .item-input {
+            width: 100px;
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            text-align: right;
+            font-size: 0.95em;
+        }
+        
+        .item-input:focus {
+            outline: none;
+            border-color: #666;
+        }
+        
+        .item-unit {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .item-rmb {
+            color: #999;
+            font-size: 0.85em;
+            min-width: 80px;
+            text-align: right;
+        }
+        
+        .summary-box {
+            background: #f9f9f9;
+            padding: 15px 20px;
+            margin-top: 20px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            color: #555;
+        }
+        
+        .summary-row .label {
+            color: #666;
+        }
+        
+        .summary-row .value {
+            font-weight: bold;
+        }
+        
+        .summary-row .rmb {
+            color: #999;
+            font-size: 0.9em;
+            margin-left: 10px;
+            font-weight: normal;
+        }
+        
+        .reset-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background: #666;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        .reset-btn:hover {
+            background: #555;
+        }
+        
+        .registration-section {
+            margin-bottom: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+        }
+        
+        .registration-section h2 {
+            font-size: 1.2em;
+            font-weight: normal;
+            margin-bottom: 20px;
+            color: #444;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 0.95em;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            font-size: 0.95em;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #666;
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .file-upload {
+            border: 2px dashed #ccc;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            background: #fafafa;
+        }
+        
+        .file-upload:hover {
+            border-color: #999;
+            background: #f5f5f5;
+        }
+        
+        .file-upload input {
+            display: none;
+        }
+        
+        .upload-text {
+            color: #666;
+        }
+        
+        .upload-hint {
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+        
+        .file-preview {
+            margin-top: 15px;
+            max-width: 200px;
+            max-height: 150px;
+            display: none;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: #333;
+            color: #fff;
+            border: none;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .submit-btn:hover {
+            background: #555;
+        }
+        
+        .contact-section {
+            background: #f9f9f9;
+            padding: 25px 20px;
+            margin-bottom: 30px;
+        }
+        
+        .contact-section h2 {
+            font-size: 1.2em;
+            font-weight: normal;
+            margin-bottom: 15px;
+            color: #444;
+        }
+        
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .contact-item h4 {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: normal;
+        }
+        
+        .contact-item p {
+            color: #444;
+            font-size: 0.95em;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            color: #999;
+            font-size: 0.85em;
+            border-top: 1px solid #eee;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 id="pageTitle">阿宗国际佛学院</h1>
+            <p class="subtitle" id="pageSubtitle">AZONG INTERNATIONAL BUDDHIST ACADEMY</p>
+        </header>
+        
+        <section class="intro-section">
+            <h2>法会介绍</h2>
+            <p id="pageDescription">
+                阿宗国际佛学院秉承藏传佛教殊胜法脉，定期举办各类法会，为众生祈福消灾、超度亡灵。
+                欢迎各界善信随喜参与，共结善缘，同证菩提。
+            </p>
+        </section>
+        
+        <section class="donation-section">
+            <h2>法会随喜</h2>
+            
+            <div class="total-box">
+                <label>随喜总额（人民币）</label>
+                <div class="total-input-wrap">
+                    <input type="number" id="totalRmb" placeholder="0" oninput="autoDistribute()">
+                    <span class="equals">=</span>
+                    <span class="total-npr" id="totalNpr">0 尼币</span>
+                </div>
+                <p class="exchange-hint">汇率：1 人民币 = <span id="exchangeRate">18.5</span> 尼币</p>
+                <p class="hint">输入总额后自动分配，也可手动调整各项目金额</p>
+            </div>
+            
+            <div class="donation-items" id="donationItems"></div>
+            
+            <div class="summary-box">
+                <div class="summary-row">
+                    <span class="label">已分配：</span>
+                    <span>
+                        <span class="value" id="allocatedNpr">0</span> 尼币
+                        <span class="rmb" id="allocatedRmb">(¥0)</span>
+                    </span>
+                </div>
+                <div class="summary-row">
+                    <span class="label">剩余：</span>
+                    <span>
+                        <span class="value" id="remainingNpr">0</span> 尼币
+                        <span class="rmb" id="remainingRmb">(¥0)</span>
+                    </span>
+                </div>
+                <button type="button" class="reset-btn" onclick="resetDistribution()">重新平均分配</button>
+            </div>
+        </section>
+        
+        <section class="registration-section">
+            <h2>随喜登记</h2>
+            
+            <form id="donationForm" onsubmit="handleSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>汇款人姓名 *</label>
+                        <input type="text" name="name" required placeholder="请输入姓名">
+                    </div>
+                    <div class="form-group">
+                        <label>联系方式 *</label>
+                        <input type="text" name="phone" required placeholder="手机号或微信">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>汇款时间 *</label>
+                        <input type="datetime-local" name="date" id="dateInput" required>
+                    </div>
+                    <div class="form-group">
+                        <label>随喜金额 (人民币) *</label>
+                        <input type="number" name="amount" id="formAmount" required placeholder="0" min="1">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>回向内容</label>
+                    <textarea name="huixiang" id="huixiangInput" placeholder="请输入回向内容，如：回向XXX身心健康，平安喜乐..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>备注</label>
+                    <textarea name="remark" placeholder="如有其他特殊要求请在此说明"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>汇款截图 *</label>
+                    <div class="file-upload" onclick="document.getElementById('screenshot').click()">
+                        <input type="file" id="screenshot" name="screenshot" accept="image/*" required onchange="previewImage(this)">
+                        <div class="upload-text">点击上传汇款截图</div>
+                        <div class="upload-hint">支持 JPG、PNG 格式</div>
+                        <img id="preview" class="file-preview" alt="预览">
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">提交登记</button>
+            </form>
+        </section>
+        
+        <section class="contact-section">
+            <h2>联系我们</h2>
+            <div class="contact-info" id="contactInfo">
+                <div class="contact-item">
+                    <h4>微信</h4>
+                    <p id="contactWechat">AzongCollege</p>
+                </div>
+                <div class="contact-item">
+                    <h4>邮箱</h4>
+                    <p id="contactEmail">info@azong.edu.np</p>
+                </div>
+                <div class="contact-item">
+                    <h4>地址</h4>
+                    <p id="contactAddress">尼泊尔加德满都</p>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="footer">
+            <p>愿以此功德，普及于一切</p>
+            <p>我等与众生，皆共成佛道</p>
+            <p style="margin-top: 15px;">© <span id="currentYear">2026</span> <span id="footerTitle">阿宗国际佛学院</span></p>
+        </footer>
+    </div>
+    
+    <script>
+        // 拼音映射表
+        const pinyinMap = {
+            '阿': 'A', '安': 'An', '艾': 'Ai', '奥': 'Ao',
+            '巴': 'Ba', '白': 'Bai', '班': 'Ban', '包': 'Bao', '贝': 'Bei', '本': 'Ben', '比': 'Bi', '边': 'Bian', '卞': 'Bian', '波': 'Bo', '卜': 'Bu',
+            '蔡': 'Cai', '曹': 'Cao', '岑': 'Cen', '柴': 'Chai', '常': 'Chang', '陈': 'Chen', '成': 'Cheng', '程': 'Cheng', '池': 'Chi', '迟': 'Chi', '楚': 'Chu', '褚': 'Chu', '崔': 'Cui',
+            '达': 'Da', '戴': 'Dai', '丹': 'Dan', '邓': 'Deng', '迪': 'Di', '丁': 'Ding', '董': 'Dong', '窦': 'Dou', '杜': 'Du', '段': 'Duan',
+            '鄂': 'E', '恩': 'En',
+            '范': 'Fan', '方': 'Fang', '房': 'Fang', '费': 'Fei', '丰': 'Feng', '冯': 'Feng', '凤': 'Feng', '符': 'Fu', '傅': 'Fu', '富': 'Fu',
+            '甘': 'Gan', '高': 'Gao', '戈': 'Ge', '葛': 'Ge', '耿': 'Geng', '龚': 'Gong', '顾': 'Gu', '关': 'Guan', '管': 'Guan', '郭': 'Guo',
+            '韩': 'Han', '杭': 'Hang', '郝': 'Hao', '何': 'He', '贺': 'He', '赫': 'He', '侯': 'Hou', '胡': 'Hu', '华': 'Hua', '黄': 'Huang', '霍': 'Huo',
+            '姬': 'Ji', '吉': 'Ji', '纪': 'Ji', '季': 'Ji', '贾': 'Jia', '简': 'Jian', '江': 'Jiang', '姜': 'Jiang', '蒋': 'Jiang', '金': 'Jin', '靳': 'Jin', '景': 'Jing', '焦': 'Jiao',
+            '卡': 'Ka', '柯': 'Ke', '孔': 'Kong', '寇': 'Kou', '匡': 'Kuang',
+            '赖': 'Lai', '兰': 'Lan', '郎': 'Lang', '劳': 'Lao', '雷': 'Lei', '冷': 'Leng', '黎': 'Li', '李': 'Li', '厉': 'Li', '利': 'Li', '连': 'Lian', '廉': 'Lian', '梁': 'Liang', '廖': 'Liao', '林': 'Lin', '凌': 'Ling', '刘': 'Liu', '柳': 'Liu', '龙': 'Long', '娄': 'Lou', '卢': 'Lu', '鲁': 'Lu', '陆': 'Lu', '路': 'Lu', '吕': 'Lv', '罗': 'Luo',
+            '马': 'Ma', '麦': 'Mai', '满': 'Man', '毛': 'Mao', '梅': 'Mei', '孟': 'Meng', '米': 'Mi', '苗': 'Miao', '闵': 'Min', '明': 'Ming', '莫': 'Mo', '牟': 'Mou', '穆': 'Mu',
+            '那': 'Na', '南': 'Nan', '倪': 'Ni', '聂': 'Nie', '宁': 'Ning', '牛': 'Niu',
+            '欧': 'Ou', '区': 'Ou',
+            '潘': 'Pan', '庞': 'Pang', '裴': 'Pei', '彭': 'Peng', '皮': 'Pi', '平': 'Ping', '蒲': 'Pu',
+            '戚': 'Qi', '齐': 'Qi', '祁': 'Qi', '钱': 'Qian', '乔': 'Qiao', '秦': 'Qin', '邱': 'Qiu', '裘': 'Qiu', '曲': 'Qu', '瞿': 'Qu',
+            '冉': 'Ran', '饶': 'Rao', '任': 'Ren', '荣': 'Rong', '阮': 'Ruan', '瑞': 'Rui',
+            '萨': 'Sa', '桑': 'Sang', '沙': 'Sha', '山': 'Shan', '商': 'Shang', '尚': 'Shang', '邵': 'Shao', '申': 'Shen', '沈': 'Shen', '盛': 'Sheng', '石': 'Shi', '史': 'Shi', '舒': 'Shu', '司': 'Si', '宋': 'Song', '苏': 'Su', '孙': 'Sun', '索': 'Suo',
+            '塔': 'Ta', '台': 'Tai', '太': 'Tai', '谭': 'Tan', '汤': 'Tang', '唐': 'Tang', '陶': 'Tao', '田': 'Tian', '童': 'Tong', '屠': 'Tu',
+            '万': 'Wan', '汪': 'Wang', '王': 'Wang', '韦': 'Wei', '卫': 'Wei', '魏': 'Wei', '温': 'Wen', '文': 'Wen', '翁': 'Weng', '沃': 'Wo', '邬': 'Wu', '吴': 'Wu', '武': 'Wu', '伍': 'Wu',
+            '西': 'Xi', '席': 'Xi', '夏': 'Xia', '冼': 'Xian', '项': 'Xiang', '萧': 'Xiao', '肖': 'Xiao', '谢': 'Xie', '辛': 'Xin', '邢': 'Xing', '熊': 'Xiong', '徐': 'Xu', '许': 'Xu', '宣': 'Xuan', '薛': 'Xue',
+            '严': 'Yan', '言': 'Yan', '颜': 'Yan', '阎': 'Yan', '杨': 'Yang', '羊': 'Yang', '阳': 'Yang', '姚': 'Yao', '叶': 'Ye', '伊': 'Yi', '易': 'Yi', '殷': 'Yin', '尹': 'Yin', '印': 'Yin', '应': 'Ying', '尤': 'You', '于': 'Yu', '余': 'Yu', '俞': 'Yu', '虞': 'Yu', '宇': 'Yu', '雨': 'Yu', '郁': 'Yu', '喻': 'Yu', '元': 'Yuan', '袁': 'Yuan', '岳': 'Yue', '云': 'Yun',
+            '臧': 'Zang', '曾': 'Zeng', '查': 'Zha', '翟': 'Zhai', '张': 'Zhang', '章': 'Zhang', '赵': 'Zhao', '甄': 'Zhen', '郑': 'Zheng', '支': 'Zhi', '钟': 'Zhong', '仲': 'Zhong', '周': 'Zhou', '朱': 'Zhu', '诸': 'Zhu', '祝': 'Zhu', '庄': 'Zhuang', '卓': 'Zhuo', '宗': 'Zong', '邹': 'Zou', '祖': 'Zu',
+            '俊': 'Jun', '杰': 'Jie', '伟': 'Wei', '强': 'Qiang', '磊': 'Lei', '军': 'Jun', '洋': 'Yang', '勇': 'Yong', '艳': 'Yan', '娟': 'Juan', '霞': 'Xia', '秀': 'Xiu', '英': 'Ying', '敏': 'Min', '静': 'Jing', '丽': 'Li', '涛': 'Tao', '明': 'Ming', '超': 'Chao', '平': 'Ping', '刚': 'Gang', '桂': 'Gui', '飞': 'Fei', '燕': 'Yan', '慧': 'Hui', '玲': 'Ling', '波': 'Bo', '斌': 'Bin', '辉': 'Hui', '浩': 'Hao', '凯': 'Kai', '健': 'Jian', '欣': 'Xin', '婷': 'Ting', '娜': 'Na', '雪': 'Xue', '晨': 'Chen', '阳': 'Yang', '璐': 'Lu', '琪': 'Qi', '涵': 'Han', '怡': 'Yi', '萱': 'Xuan', '彤': 'Tong', '睿': 'Rui', '航': 'Hang', '昊': 'Hao', '轩': 'Xuan', '泽': 'Ze', '梓': 'Zi', '豪': 'Hao', '铭': 'Ming', '辰': 'Chen', '瑞': 'Rui', '恒': 'Heng', '毅': 'Yi', '翔': 'Xiang', '远': 'Yuan', '鹏': 'Peng', '林': 'Lin', '森': 'Sen', '炎': 'Yan', '坤': 'Kun', '城': 'Cheng', '威': 'Wei', '亮': 'Liang', '光': 'Guang', '星': 'Xing', '曦': 'Xi', '晖': 'Hui', '晗': 'Han', '晟': 'Sheng', '昂': 'Ang', '昀': 'Yun', '昕': 'Xin', '晓': 'Xiao', '晶': 'Jing', '晴': 'Qing', '智': 'Zhi'
+        };
+
+        function getPinyin(name) {
+            let result = '';
+            for (let char of name) {
+                result += pinyinMap[char] || char;
+            }
+            return result;
+        }
+
+        let config = { exchangeRate: 18.5, items: [] };
+        let totalNprAmount = 0;
+        let isManualAdjusting = false;
+
+        async function loadConfig() {
+            try {
+                const localConfig = localStorage.getItem('azong_config');
+                if (localConfig) {
+                    config = JSON.parse(localConfig);
+                } else {
+                    const response = await fetch('config.json?v=' + Date.now());
+                    config = await response.json();
+                }
+                applyConfig();
+            } catch (error) {
+                renderDonationItems();
+            }
+        }
+
+        function applyConfig() {
+            document.getElementById('pageTitle').textContent = config.title || '阿宗国际佛学院';
+            document.getElementById('pageSubtitle').textContent = config.subtitle || '';
+            document.getElementById('pageDescription').textContent = config.description || '';
+            document.getElementById('exchangeRate').textContent = config.exchangeRate || 18.5;
+            document.getElementById('footerTitle').textContent = config.title || '阿宗国际佛学院';
+            
+            if (config.contact) {
+                document.getElementById('contactWechat').textContent = config.contact.wechat || '-';
+                document.getElementById('contactEmail').textContent = config.contact.email || '-';
+                document.getElementById('contactAddress').textContent = config.contact.address || '-';
+            }
+            
+            renderDonationItems();
+        }
+
+        function renderDonationItems() {
+            const container = document.getElementById('donationItems');
+            const items = config.items || [
+                {id: 'fahui', name: '随喜法会', sort: 1},
+                {id: 'gongdeng', name: '供灯', sort: 2},
+                {id: 'gongseng', name: '供僧', sort: 3},
+                {id: 'gongzhai', name: '供斋', sort: 4},
+                {id: 'gonghuaguo', name: '供花果', sort: 5},
+                {id: 'yangong', name: '烟供', sort: 6}
+            ];
+            
+            items.sort((a, b) => a.sort - b.sort);
+            
+            let html = '';
+            const numbers = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+            
+            items.forEach((item, index) => {
+                const num = numbers[index] || (index + 1);
+                html += '<div class="donation-item"><span class="item-number">' + num + '</span><span class="item-name">' + item.name + '</span><div class="item-input-group"><input type="number" class="item-input" data-item="' + item.id + '" placeholder="0" oninput="manualAdjust(this)"><span class="item-unit">尼币</span><span class="item-rmb" id="' + item.id + '-rmb">≈ ¥0</span></div></div>';
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function autoDistribute() {
+            if (isManualAdjusting) return;
+            
+            const rmb = parseFloat(document.getElementById('totalRmb').value) || 0;
+            totalNprAmount = Math.round(rmb * (config.exchangeRate || 18.5));
+            
+            document.getElementById('totalNpr').textContent = totalNprAmount.toLocaleString() + ' 尼币';
+            document.getElementById('formAmount').value = rmb > 0 ? rmb : '';
+            
+            const inputs = document.querySelectorAll('.item-input');
+            const count = inputs.length;
+            if (count === 0) return;
+            
+            const perItem = Math.floor(totalNprAmount / count);
+            const remainder = totalNprAmount - (perItem * count);
+            
+            inputs.forEach((input, index) => {
+                const amount = perItem + (index < remainder ? 1 : 0);
+                input.value = amount > 0 ? amount : '';
+                updateRmbDisplay(input.dataset.item, amount);
+            });
+            
+            updateSummary();
+        }
+
+        function manualAdjust(input) {
+            isManualAdjusting = true;
+            
+            const item = input.dataset.item;
+            const amount = parseFloat(input.value) || 0;
+            
+            input.dataset.manual = 'true';
+            
+            updateRmbDisplay(item, amount);
+            redistributeRemaining();
+            updateSummary();
+            
+            setTimeout(() => { isManualAdjusting = false; }, 100);
+        }
+
+        function redistributeRemaining() {
+            const inputs = document.querySelectorAll('.item-input');
+            
+            let manualTotal = 0;
+            inputs.forEach(input => {
+                if (input.dataset.manual === 'true') {
+                    manualTotal += parseFloat(input.value) || 0;
+                }
+            });
+            
+            const remaining = totalNprAmount - manualTotal;
+            const autoItems = Array.from(inputs).filter(input => input.dataset.manual !== 'true');
+            
+            if (remaining <= 0 || autoItems.length === 0) {
+                autoItems.forEach(input => {
+                    input.value = '';
+                    updateRmbDisplay(input.dataset.item, 0);
+                });
+                return;
+            }
+            
+            const perItem = Math.floor(remaining / autoItems.length);
+            const remainder = remaining - (perItem * autoItems.length);
+            
+            autoItems.forEach((input, index) => {
+                const amount = perItem + (index < remainder ? 1 : 0);
+                input.value = amount > 0 ? amount : '';
+                updateRmbDisplay(input.dataset.item, amount);
+            });
+        }
+
+        function updateRmbDisplay(item, nprAmount) {
+            const rmbAmount = (nprAmount / (config.exchangeRate || 18.5)).toFixed(2);
+            const display = document.getElementById(item + '-rmb');
+            if (display) {
+                display.textContent = '≈ ¥' + rmbAmount;
+            }
+        }
+
+        function updateSummary() {
+            const inputs = document.querySelectorAll('.item-input');
+            let allocated = 0;
+            
+            inputs.forEach(input => {
+                allocated += parseFloat(input.value) || 0;
+            });
+            
+            const remaining = totalNprAmount - allocated;
+            const rate = config.exchangeRate || 18.5;
+            
+            document.getElementById('allocatedNpr').textContent = allocated.toLocaleString();
+            document.getElementById('allocatedRmb').textContent = '(¥' + (allocated / rate).toFixed(2) + ')';
+            
+            document.getElementById('remainingNpr').textContent = remaining.toLocaleString();
+            document.getElementById('remainingRmb').textContent = '(¥' + (remaining / rate).toFixed(2) + ')';
+            
+            const remainingEl = document.getElementById('remainingNpr');
+            if (remaining < 0) {
+                remainingEl.style.color = '#c00';
+            } else if (remaining === 0) {
+                remainingEl.style.color = '#080';
+            } else {
+                remainingEl.style.color = '#444';
+            }
+        }
+
+        function resetDistribution() {
+            const inputs = document.querySelectorAll('.item-input');
+            inputs.forEach(input => {
+                delete input.dataset.manual;
+            });
+            
+            isManualAdjusting = false;
+            autoDistribute();
+        }
+
+        function previewImage(input) {
+            const preview = document.getElementById('preview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function getScreenshotData() {
+            const preview = document.getElementById('preview');
+            if (preview && preview.src && preview.style.display !== 'none') {
+                return preview.src;
+            }
+            return null;
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            const inputs = document.querySelectorAll('.item-input');
+            let distributionItems = [];
+            let totalNpr = 0;
+            
+            inputs.forEach((input, index) => {
+                const amount = parseFloat(input.value) || 0;
+                if (amount > 0) {
+                    const name = input.closest('.donation-item').querySelector('.item-name').textContent;
+                    const numbers = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+                    distributionItems.push({
+                        number: numbers[index] || (index + 1),
+                        name: name,
+                        amount: amount
+                    });
+                    totalNpr += amount;
+                }
+            });
+            
+            const screenshotData = getScreenshotData();
+            
+            generateConfirmationPage({
+                name: data.name,
+                rmbAmount: data.amount,
+                nprAmount: totalNpr,
+                items: distributionItems,
+                huixiang: data.huixiang || '',
+                remark: data.remark || '',
+                screenshot: screenshotData,
+                date: new Date().toLocaleString('zh-CN'),
+                config: config
+            });
+            
+            event.target.reset();
+            document.getElementById('preview').style.display = 'none';
+            document.getElementById('totalRmb').value = '';
+            document.getElementById('totalNpr').textContent = '0 尼币';
+            
+            inputs.forEach(input => {
+                input.value = '';
+                updateRmbDisplay(input.dataset.item, 0);
+            });
+            
+            updateSummary();
+        }
+
+        function generateConfirmationPage(data) {
+            const currencyName = '尼币';
+            const namePinyin = getPinyin(data.name);
+            const displayName = data.name + (namePinyin !== data.name ? '（' + namePinyin + '）' : '');
+            
+            let itemsHtml = '';
+            data.items.forEach(item => {
+                itemsHtml += '<div class="confirm-item"><span class="item-num">' + item.number + '、' + item.name + '</span><span class="item-amt">' + item.amount.toLocaleString() + '（' + currencyName + '）</span></div>';
+            });
+            
+            let huixiangHtml = '';
+            if (data.huixiang && data.huixiang.trim()) {
+                huixiangHtml = '<div class="confirm-section"><h3>回向</h3><div class="huixiang-content">' + data.huixiang.replace(/\n/g, '<br>') + '</div></div>';
+            }
+
+            let remarkHtml = '';
+            if (data.remark && data.remark.trim()) {
+                remarkHtml = '<div class="confirm-section"><h3>备注</h3><div class="huixiang-content">' + data.remark.replace(/\n/g, '<br>') + '</div></div>';
+            }
+            
+            let screenshotHtml = '';
+            if (data.screenshot) {
+                screenshotHtml = '<div class="confirm-section"><h3>汇款截图</h3><div class="screenshot-container"><img src="' + data.screenshot + '" class="screenshot-img" onclick="this.classList.toggle(\'zoomed\')"></div></div>';
+            }
+            
+            const pageStyles = '*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f5f5;color:#333;line-height:1.8;padding:40px 20px}.container{max-width:600px;margin:0 auto;background:#fff;padding:40px;border:1px solid #ddd}.header{text-align:center;padding-bottom:30px;border-bottom:2px solid #8B4513;margin-bottom:30px}.header h1{font-size:1.5em;color:#8B4513;font-weight:normal;margin-bottom:10px}.header .subtitle{color:#999;font-size:0.9em}.confirm-section{margin-bottom:30px}.confirm-section h3{font-size:1.1em;color:#555;font-weight:normal;margin-bottom:15px;padding-bottom:8px;border-bottom:1px solid #eee}.donor-info{font-size:1.1em;color:#444}.donor-info .label{color:#666}.amount-info{background:#f9f9f9;padding:20px;margin:15px 0}.amount-info .main-amount{font-size:1.3em;color:#8B4513;margin-bottom:5px}.amount-info .sub-amount{color:#666;font-size:0.95em}.confirm-items{margin-top:15px}.confirm-item{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px dotted #ddd}.confirm-item:last-child{border-bottom:none}.confirm-item .item-num{color:#555}.confirm-item .item-amt{color:#8B4513;font-weight:bold}.huixiang-content{background:#f9f9f9;padding:20px;color:#555;line-height:2;text-align:justify}.screenshot-container{margin-top:15px;text-align:center}.screenshot-img{max-width:100%;max-height:400px;border:1px solid #ddd;cursor:zoom-in;transition:transform 0.3s}.screenshot-img.zoomed{transform:scale(1.5);cursor:zoom-out}.footer{text-align:center;margin-top:40px;padding-top:30px;border-top:1px solid #eee;color:#999;font-size:0.9em}.footer p{margin:5px 0}.print-btn{display:block;width:100%;padding:15px;margin-top:30px;background:#8B4513;color:#fff;border:none;font-size:1em;cursor:pointer}.print-btn:hover{background:#A0522D}.back-link{text-align:center;margin-top:20px}.back-link a{color:#666;text-decoration:none}@media print{body{background:#fff;padding:0}.container{border:none;max-width:100%}.print-btn,.back-link{display:none}.screenshot-img{max-height:none}}';
+            
+            const confirmationHtml = '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>随喜确认 - ' + (data.config.title || '阿宗国际佛学院') + '</title><style>' + pageStyles + '</style></head><body><div class="container"><div class="header"><h1>' + (data.config.title || '阿宗国际佛学院') + '</h1><p class="subtitle">随喜确认单</p></div><div class="confirm-section"><h3>供养人信息</h3><div class="donor-info"><p><span class="label">供养人：</span>' + displayName + '</p></div></div><div class="confirm-section"><h3>随喜金额</h3><div class="amount-info"><div class="main-amount">' + data.rmbAmount + '元（人民币）</div><div class="sub-amount">= ' + data.nprAmount.toLocaleString() + ' ' + currencyName + '</div></div></div><div class="confirm-section"><h3>用途分配</h3><div class="confirm-items">' + itemsHtml + '</div></div>' + huixiangHtml + remarkHtml + screenshotHtml + '<div class="footer"><p>登记时间：' + data.date + '</p><p style="margin-top:10px">愿以此功德，普及于一切</p><p>我等与众生，皆共成佛道</p></div><button class="print-btn" onclick="window.print()">打印 / 保存为PDF</button><div class="back-link"><a href="#" onclick="location.reload();return false;">← 返回重新登记</a></div></div></body></html>';
+            
+            document.body.innerHTML = confirmationHtml;
+            document.title = '随喜确认 - ' + (data.config.title || '阿宗国际佛学院');
+            window.scrollTo(0, 0);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('dateInput').value = now.toISOString().slice(0, 16);
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+            loadConfig();
+        });
+    </script>
+</body>
+</html>

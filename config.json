@@ -1,0 +1,21 @@
+{
+  "title": "阿宗国际佛学院",
+  "subtitle": "AZONG INTERNATIONAL BUDDHIST ACADEMY",
+  "description": "阿宗国际佛学院秉承藏传佛教殊胜法脉，定期举办各类法会，为众生祈福消灾、超度亡灵。欢迎各界善信随喜参与，共结善缘，同证菩提。您的每一分随喜都将用于法会供品、僧众供养及佛学院建设，功德无量。",
+  "exchangeRate": 18.5,
+  "currencyName": "尼泊尔卢比",
+  "currencyCode": "NPR",
+  "items": [
+    {"id": "fahui", "name": "随喜法会", "sort": 1},
+    {"id": "gongdeng", "name": "供灯", "sort": 2},
+    {"id": "gongseng", "name": "供僧", "sort": 3},
+    {"id": "gongzhai", "name": "供斋", "sort": 4},
+    {"id": "gonghuaguo", "name": "供花果", "sort": 5},
+    {"id": "yangong", "name": "烟供", "sort": 6}
+  ],
+  "contact": {
+    "wechat": "AzongCollege",
+    "email": "info@azong.edu.np",
+    "address": "尼泊尔加德满都"
+  }
+}

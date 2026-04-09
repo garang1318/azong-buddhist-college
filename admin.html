@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理 - 阿宗国际佛学院</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-weight: normal;
+            font-size: 1.8em;
+        }
+        
+        .section {
+            background: #fff;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+        }
+        
+        .section h2 {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            color: #555;
+            font-weight: normal;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 0.95em;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #666;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .items-list {
+            margin-top: 15px;
+        }
+        
+        .item-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .item-row input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+        }
+        
+        .item-row .sort-input {
+            width: 80px;
+        }
+        
+        .item-row button {
+            padding: 10px 15px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .item-row button:hover {
+            background: #c82333;
+        }
+        
+        .btn-add {
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .btn-add:hover {
+            background: #218838;
+        }
+        
+        .btn-save {
+            width: 100%;
+            padding: 15px;
+            background: #333;
+            color: white;
+            border: none;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .btn-save:hover {
+            background: #555;
+        }
+        
+        .message {
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .hint {
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .back-link a {
+            color: #666;
+            text-decoration: none;
+        }
+        
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>后台管理</h1>
+        
+        <div id="message" class="message"></div>
+        
+        <div class="section">
+            <h2>法会信息</h2>
+            <div class="form-group">
+                <label>标题</label>
+                <input type="text" id="title" placeholder="如：阿宗国际佛学院">
+            </div>
+            <div class="form-group">
+                <label>副标题</label>
+                <input type="text" id="subtitle" placeholder="如：AZONG INTERNATIONAL BUDDHIST ACADEMY">
+            </div>
+            <div class="form-group">
+                <label>介绍</label>
+                <textarea id="description" placeholder="请输入法会介绍..."></textarea>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>汇率设置</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>汇率 (1人民币 = ? 外币)</label>
+                    <input type="number" id="exchangeRate" step="0.01" placeholder="18.5">
+                    <p class="hint">设置人民币兑换外币的汇率</p>
+                </div>
+                <div class="form-group">
+                    <label>外币名称</label>
+                    <input type="text" id="currencyName" placeholder="如：尼泊尔卢比">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>外币代码</label>
+                <input type="text" id="currencyCode" placeholder="如：NPR">
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>随喜项目</h2>
+            <p class="hint">可拖拽排序，序号越小越靠前</p>
+            <div id="itemsList" class="items-list"></div>
+            <button type="button" class="btn-add" onclick="addItem()">+ 添加项目</button>
+        </div>
+        
+        <div class="section">
+            <h2>联系方式</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>微信</label>
+                    <input type="text" id="wechat" placeholder="微信号">
+                </div>
+                <div class="form-group">
+                    <label>邮箱</label>
+                    <input type="email" id="email" placeholder="邮箱地址">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>地址</label>
+                <input type="text" id="address" placeholder="地址">
+            </div>
+        </div>
+        
+        <button type="button" class="btn-save" onclick="saveConfig()">保存配置</button>
+        
+        <div class="section" style="margin-top: 30px; background: #f0f8ff;">
+            <h2>部署说明</h2>
+            <div style="color: #666; line-height: 1.8;">
+                <p><strong>使用步骤：</strong></p>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>填写上方所有配置信息</li>
+                    <li>点击"保存配置"按钮</li>
+                    <li>配置文件(config.json)会自动下载</li>
+                    <li>将 config.json 上传到网站服务器</li>
+                    <li>前台页面(index.html)会自动读取配置</li>
+                </ol>
+                <p style="margin-top: 15px;"><strong>注意：</strong>每次修改配置后，都需要重新下载并上传 config.json 文件。</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let config = {};
+        
+        // 加载配置
+        async function loadConfig() {
+            try {
+                const response = await fetch('config.json?v=' + Date.now());
+                config = await response.json();
+                
+                // 填充表单
+                document.getElementById('title').value = config.title || '';
+                document.getElementById('subtitle').value = config.subtitle || '';
+                document.getElementById('description').value = config.description || '';
+                document.getElementById('exchangeRate').value = config.exchangeRate || '';
+                document.getElementById('currencyName').value = config.currencyName || '';
+                document.getElementById('currencyCode').value = config.currencyCode || '';
+                document.getElementById('wechat').value = config.contact?.wechat || '';
+                document.getElementById('email').value = config.contact?.email || '';
+                document.getElementById('address').value = config.contact?.address || '';
+                
+                // 渲染项目列表
+                renderItems();
+            } catch (error) {
+                showMessage('加载配置失败：' + error.message, 'error');
+            }
+        }
+        
+        // 渲染项目列表
+        function renderItems() {
+            const container = document.getElementById('itemsList');
+            container.innerHTML = '';
+            
+            const items = config.items || [];
+            items.sort((a, b) => a.sort - b.sort);
+            
+            items.forEach((item, index) => {
+                const row = document.createElement('div');
+                row.className = 'item-row';
+                row.innerHTML = `
+                    <input type="text" class="sort-input" value="${item.sort}" placeholder="序号" onchange="updateItem(${index}, 'sort', this.value)">
+                    <input type="text" value="${item.name}" placeholder="项目名称" onchange="updateItem(${index}, 'name', this.value)">
+                    <input type="hidden" value="${item.id}">
+                    <button type="button" onclick="removeItem(${index})">删除</button>
+                `;
+                container.appendChild(row);
+            });
+        }
+        
+        // 更新项目
+        function updateItem(index, field, value) {
+            if (!config.items) config.items = [];
+            if (!config.items[index]) config.items[index] = {};
+            
+            if (field === 'sort') {
+                config.items[index][field] = parseInt(value) || 0;
+            } else {
+                config.items[index][field] = value;
+            }
+        }
+        
+        // 添加项目
+        function addItem() {
+            if (!config.items) config.items = [];
+            
+            const newItem = {
+                id: 'item_' + Date.now(),
+                name: '新项目',
+                sort: config.items.length + 1
+            };
+            
+            config.items.push(newItem);
+            renderItems();
+        }
+        
+        // 删除项目
+        function removeItem(index) {
+            if (config.items && config.items[index]) {
+                config.items.splice(index, 1);
+                renderItems();
+            }
+        }
+        
+        // 保存配置
+        async function saveConfig() {
+            // 收集表单数据
+            config.title = document.getElementById('title').value;
+            config.subtitle = document.getElementById('subtitle').value;
+            config.description = document.getElementById('description').value;
+            config.exchangeRate = parseFloat(document.getElementById('exchangeRate').value) || 18.5;
+            config.currencyName = document.getElementById('currencyName').value;
+            config.currencyCode = document.getElementById('currencyCode').value;
+            
+            if (!config.contact) config.contact = {};
+            config.contact.wechat = document.getElementById('wechat').value;
+            config.contact.email = document.getElementById('email').value;
+            config.contact.address = document.getElementById('address').value;
+            
+            // 保存到本地存储（同一浏览器内有效）
+            localStorage.setItem('azong_config', JSON.stringify(config));
+            
+            // 同时提供下载方式用于服务器部署
+            const dataStr = JSON.stringify(config, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'config.json';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showMessage('配置已保存！在当前浏览器中已生效。如需部署到服务器，请下载 config.json 替换服务器文件。', 'success');
+        }
+        
+        // 显示消息
+        function showMessage(text, type) {
+            const msgEl = document.getElementById('message');
+            msgEl.textContent = text;
+            msgEl.className = 'message ' + type;
+            
+            setTimeout(() => {
+                msgEl.className = 'message';
+            }, 5000);
+        }
+        
+        // 页面加载时读取配置
+        loadConfig();
+    </script>
+</body>
+</html>
