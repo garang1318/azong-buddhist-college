@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>随喜统计 - 阿宗国际佛学院</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 15px;
+        }
+
+        @media screen and (min-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: normal;
+            font-size: 1.8em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+        }
+
+        /* 统计卡片 */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #8B4513;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.85em;
+            color: #888;
+        }
+
+        /* 工具栏 */
+        .toolbar {
+            background: #fff;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .toolbar input,
+        .toolbar select {
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .toolbar input {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .toolbar select {
+            min-width: 120px;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit;
+            touch-action: manipulation;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: #8B4513;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #A0522D;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-outline {
+            background: #fff;
+            color: #333;
+            border: 1px solid #ccc;
+        }
+
+        .btn-outline:hover {
+            background: #f5f5f5;
+        }
+
+        /* 表格 */
+        .table-container {
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        thead {
+            background: #f8f8f8;
+        }
+
+        th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: normal;
+            color: #666;
+            font-size: 0.9em;
+            border-bottom: 2px solid #e0e0e0;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95em;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .amount {
+            color: #8B4513;
+            font-weight: bold;
+        }
+
+        .items-tag {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            margin: 2px;
+            color: #555;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        /* 消息提示 */
+        .message {
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .message.loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            display: block;
+        }
+
+        /* 分页 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 15px;
+        }
+
+        .pagination button {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .pagination button:disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .pagination .page-info {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* 详情弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .modal h2 {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            color: #555;
+            font-weight: normal;
+        }
+
+        .modal .detail-row {
+            display: flex;
+            padding: 8px 0;
+            border-bottom: 1px dotted #f0f0f0;
+        }
+
+        .modal .detail-label {
+            color: #888;
+            width: 100px;
+            flex-shrink: 0;
+        }
+
+        .modal .detail-value {
+            color: #333;
+            flex: 1;
+        }
+
+        .modal .close-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 16px;
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .nav-links a {
+            color: #8B4513;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>随喜统计</h1>
+        <p class="subtitle">阿宗国际佛学院 - 登记数据统计</p>
+
+        <div class="nav-links">
+            <a href="index.html">← 返回前台</a>
+            <a href="admin.html">后台管理</a>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <!-- 统计卡片 -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">登记总笔数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalRmb">0</div>
+                <div class="stat-label">总金额（人民币）</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalNpr">0</div>
+                <div class="stat-label">总金额（尼币）</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgRmb">0</div>
+                <div class="stat-label">平均金额（人民币）</div>
+            </div>
+        </div>
+
+        <!-- 工具栏 -->
+        <div class="toolbar">
+            <input type="text" id="searchInput" placeholder="搜索姓名、联系方式..." oninput="filterData()">
+            <select id="sortSelect" onchange="filterData()">
+                <option value="newest">最新优先</option>
+                <option value="oldest">最早优先</option>
+                <option value="amount-desc">金额从高到低</option>
+                <option value="amount-asc">金额从低到高</option>
+            </select>
+            <button class="btn btn-success" onclick="downloadCSV()">📥 下载 CSV</button>
+            <button class="btn btn-primary" onclick="downloadJSON()">📥 下载 JSON</button>
+            <button class="btn btn-danger" onclick="confirmClear()">🗑️ 清空数据</button>
+        </div>
+
+        <!-- 数据表格 -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>姓名</th>
+                        <th>联系方式</th>
+                        <th>汇款时间</th>
+                        <th>金额（RMB）</th>
+                        <th>金额（尼币）</th>
+                        <th>随喜项目</th>
+                        <th>回向</th>
+                        <th>登记时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+            <div id="emptyState" class="empty-state" style="display:none;">
+                <div class="icon">📋</div>
+                <p>暂无登记数据</p>
+                <p style="font-size:0.85em;margin-top:10px;">用户在前台提交随喜登记后，数据会自动显示在这里</p>
+            </div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination" id="pagination">
+            <button onclick="changePage(-1)" id="prevBtn">上一页</button>
+            <span class="page-info" id="pageInfo">第 1 页</span>
+            <button onclick="changePage(1)" id="nextBtn">下一页</button>
+        </div>
+    </div>
+
+    <!-- 详情弹窗 -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" id="modalContent">
+            <h2>登记详情</h2>
+            <div id="modalBody"></div>
+            <button class="close-btn" onclick="closeModal()">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        let allRegistrations = [];
+        let filteredData = [];
+        let currentPage = 1;
+        const pageSize = 20;
+
+        // 页面加载
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+        });
+
+        // 加载数据
+        async function loadData() {
+            showMessage('正在加载数据...', 'loading');
+
+            try {
+                const token = localStorage.getItem('github_token') || atob('Z2hvX0tGOW9leXFQaExtYWVarmw2bHlpMldnbm9saTJhOTNhN0xBMg==');
+                const owner = localStorage.getItem('repo_owner') || 'garang1318';
+                const repo = localStorage.getItem('repo_name') || 'azong-buddhist-college';
+
+                // 尝试从 GitHub API 加载
+                let data = null;
+                try {
+                    const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/registrations.json`, {
+                        headers: { 'Authorization': `token ${token}` }
+                    });
+                    if (resp.ok) {
+                        const fileData = await resp.json();
+                        data = JSON.parse(atob(fileData.content));
+                    }
+                } catch(e) {}
+
+                // 备用：从 jsDelivr CDN 加载
+                if (!data) {
+                    try {
+                        const cdnResp = await fetch(`https://cdn.jsdelivr.net/gh/${owner}/${repo}@main/data/registrations.json?_=${Date.now()}`);
+                        if (cdnResp.ok) {
+                            data = await cdnResp.json();
+                        }
+                    } catch(e) {}
+                }
+
+                if (data && Array.isArray(data)) {
+                    allRegistrations = data;
+                    showMessage(`✅ 已加载 ${data.length} 条登记记录`, 'success');
+                } else {
+                    allRegistrations = [];
+                    showMessage('暂无登记数据', 'loading');
+                }
+
+                filterData();
+            } catch(e) {
+                showMessage('加载数据失败: ' + e.message, 'error');
+                allRegistrations = [];
+                filterData();
+            }
+        }
+
+        // 筛选和排序
+        function filterData() {
+            const search = document.getElementById('searchInput').value.toLowerCase().trim();
+            const sort = document.getElementById('sortSelect').value;
+
+            filteredData = allRegistrations.filter(r => {
+                if (!search) return true;
+                return (r.name && r.name.toLowerCase().includes(search)) ||
+                       (r.contact && r.contact.toLowerCase().includes(search)) ||
+                       (r.huixiang && r.huixiang.toLowerCase().includes(search));
+            });
+
+            // 排序
+            filteredData.sort((a, b) => {
+                switch(sort) {
+                    case 'newest': return new Date(b.submittedAt) - new Date(a.submittedAt);
+                    case 'oldest': return new Date(a.submittedAt) - new Date(b.submittedAt);
+                    case 'amount-desc': return parseFloat(b.rmbAmount) - parseFloat(a.rmbAmount);
+                    case 'amount-asc': return parseFloat(a.rmbAmount) - parseFloat(b.rmbAmount);
+                    default: return 0;
+                }
+            });
+
+            currentPage = 1;
+            updateStats();
+            renderTable();
+        }
+
+        // 更新统计
+        function updateStats() {
+            const total = allRegistrations.length;
+            const totalRmb = allRegistrations.reduce((sum, r) => sum + (parseFloat(r.rmbAmount) || 0), 0);
+            const totalNpr = allRegistrations.reduce((sum, r) => sum + (parseFloat(r.nprAmount) || 0), 0);
+            const avg = total > 0 ? (totalRmb / total).toFixed(0) : 0;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('totalRmb').textContent = totalRmb.toLocaleString();
+            document.getElementById('totalNpr').textContent = totalNpr.toLocaleString();
+            document.getElementById('avgRmb').textContent = avg;
+        }
+
+        // 渲染表格
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const emptyState = document.getElementById('emptyState');
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                document.getElementById('pagination').style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            document.getElementById('pagination').style.display = 'flex';
+
+            const totalPages = Math.ceil(filteredData.length / pageSize);
+            const start = (currentPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, filteredData.length);
+            const pageData = filteredData.slice(start, end);
+
+            let html = '';
+            pageData.forEach((r, i) => {
+                const idx = start + i + 1;
+                const itemsHtml = (r.items || []).map(item => `<span class="items-tag">${item.name}: ${item.amount}</span>`).join('');
+                const date = r.date ? r.date.replace('T', ' ').slice(0, 16) : '-';
+                const submitted = r.submittedAt ? new Date(r.submittedAt).toLocaleString('zh-CN') : '-';
+
+                html += `<tr>
+                    <td>${idx}</td>
+                    <td>${escapeHtml(r.name || '-')}</td>
+                    <td>${escapeHtml(r.contact || '-')}</td>
+                    <td>${date}</td>
+                    <td class="amount">${parseFloat(r.rmbAmount || 0).toLocaleString()}</td>
+                    <td class="amount">${parseFloat(r.nprAmount || 0).toLocaleString()}</td>
+                    <td>${itemsHtml || '-'}</td>
+                    <td>${escapeHtml((r.huixiang || '').slice(0, 20))}${(r.huixiang || '').length > 20 ? '...' : ''}</td>
+                    <td>${submitted}</td>
+                    <td><button class="btn btn-outline" style="padding:5px 10px;font-size:12px" onclick="showDetail(${start + i})">详情</button></td>
+                </tr>`;
+            });
+
+            tbody.innerHTML = html;
+
+            // 更新分页
+            document.getElementById('pageInfo').textContent = `第 ${currentPage} / ${totalPages} 页（共 ${filteredData.length} 条）`;
+            document.getElementById('prevBtn').disabled = currentPage <= 1;
+            document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+        }
+
+        // 翻页
+        function changePage(delta) {
+            const totalPages = Math.ceil(filteredData.length / pageSize);
+            const newPage = currentPage + delta;
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderTable();
+            }
+        }
+
+        // 显示详情
+        function showDetail(index) {
+            const r = filteredData[index];
+            if (!r) return;
+
+            const itemsHtml = (r.items || []).map(item =>
+                `<div class="detail-row"><div class="detail-label">${item.name}</div><div class="detail-value amount">${item.amount} 尼币</div></div>`
+            ).join('');
+
+            document.getElementById('modalBody').innerHTML = `
+                <div class="detail-row"><div class="detail-label">姓名</div><div class="detail-value">${escapeHtml(r.name || '-')}</div></div>
+                <div class="detail-row"><div class="detail-label">联系方式</div><div class="detail-value">${escapeHtml(r.contact || '-')}</div></div>
+                <div class="detail-row"><div class="detail-label">汇款时间</div><div class="detail-value">${r.date || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">人民币</div><div class="detail-value amount">${parseFloat(r.rmbAmount || 0).toLocaleString()} 元</div></div>
+                <div class="detail-row"><div class="detail-label">尼币</div><div class="detail-value amount">${parseFloat(r.nprAmount || 0).toLocaleString()}</div></div>
+                <div class="detail-row"><div class="detail-label">随喜项目</div><div class="detail-value">${itemsHtml || '-'}</div></div>
+                <div class="detail-row"><div class="detail-label">回向</div><div class="detail-value">${escapeHtml(r.huixiang || '-')}</div></div>
+                <div class="detail-row"><div class="detail-label">备注</div><div class="detail-value">${escapeHtml(r.remark || '-')}</div></div>
+                <div class="detail-row"><div class="detail-label">登记时间</div><div class="detail-value">${r.submittedAt ? new Date(r.submittedAt).toLocaleString('zh-CN') : '-'}</div></div>
+            `;
+
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        // 下载 CSV
+        function downloadCSV() {
+            if (allRegistrations.length === 0) {
+                showMessage('暂无数据可下载', 'error');
+                return;
+            }
+
+            const BOM = '\uFEFF';
+            let csv = BOM + '序号,姓名,联系方式,汇款时间,金额(人民币),金额(尼币),随喜项目,回向,备注,登记时间\n';
+
+            allRegistrations.forEach((r, i) => {
+                const items = (r.items || []).map(item => `${item.name}:${item.amount}`).join('; ');
+                csv += `${i + 1},"${r.name || ''}","${r.contact || ''}","${r.date || ''}",${r.rmbAmount || 0},${r.nprAmount || 0},"${items}","${(r.huixiang || '').replace(/"/g, '""')}","${(r.remark || '').replace(/"/g, '""')}","${r.submittedAt || ''}"\n`;
+            });
+
+            downloadFile(csv, '随喜登记统计_' + getDateStr() + '.csv', 'text/csv;charset=utf-8');
+            showMessage('✅ CSV 文件已下载', 'success');
+        }
+
+        // 下载 JSON
+        function downloadJSON() {
+            if (allRegistrations.length === 0) {
+                showMessage('暂无数据可下载', 'error');
+                return;
+            }
+
+            const json = JSON.stringify(allRegistrations, null, 2);
+            downloadFile(json, '随喜登记统计_' + getDateStr() + '.json', 'application/json');
+            showMessage('✅ JSON 文件已下载', 'success');
+        }
+
+        // 下载文件
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type: type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // 确认清空
+        function confirmClear() {
+            if (allRegistrations.length === 0) {
+                showMessage('暂无数据', 'error');
+                return;
+            }
+            if (confirm('确定要清空所有登记数据吗？此操作不可恢复！')) {
+                clearData();
+            }
+        }
+
+        // 清空数据
+        async function clearData() {
+            showMessage('正在清空数据...', 'loading');
+
+            try {
+                const token = localStorage.getItem('github_token') || atob('Z2hvX0tGOW9leXFQaExtYWVarmw2bHlpMldgbm9saTJhOTNhN0xBMg==');
+                const owner = localStorage.getItem('repo_owner') || 'garang1318';
+                const repo = localStorage.getItem('repo_name') || 'azong-buddhist-college';
+
+                // 获取文件 SHA
+                let fileSha = null;
+                try {
+                    const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/registrations.json`, {
+                        headers: { 'Authorization': `token ${token}` }
+                    });
+                    if (resp.ok) {
+                        const fileData = await resp.json();
+                        fileSha = fileData.sha;
+                    }
+                } catch(e) {}
+
+                if (!fileSha) {
+                    showMessage('数据文件不存在', 'error');
+                    return;
+                }
+
+                // 写入空数组
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify([], null, 2))));
+                const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/registrations.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Clear all registration data',
+                        content: content,
+                        sha: fileSha
+                    })
+                });
+
+                if (resp.ok) {
+                    allRegistrations = [];
+                    filterData();
+                    showMessage('✅ 数据已清空', 'success');
+                } else {
+                    showMessage('清空失败: ' + resp.status, 'error');
+                }
+            } catch(e) {
+                showMessage('清空失败: ' + e.message, 'error');
+            }
+        }
+
+        // 工具函数
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function getDateStr() {
+            const d = new Date();
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        }
+
+        function showMessage(text, type) {
+            const msgEl = document.getElementById('message');
+            msgEl.textContent = text;
+            msgEl.className = 'message ' + type;
+            if (type !== 'loading') {
+                setTimeout(() => { msgEl.className = 'message'; }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>
