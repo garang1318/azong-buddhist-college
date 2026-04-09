@@ -664,7 +664,7 @@
                     
                     showMessage('正在同步版本号...', 'loading');
                     try {
-                        const verContent = btoa(String(Date.now()));
+                        const verContent = String(Date.now());
                         let verSha = null;
                         try {
                             const verResp = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/ver.txt`, {
