@@ -163,6 +163,12 @@
             color: #444;
         }
         
+        .item-icon {
+            margin-right: 10px;
+            font-size: 18px;
+            line-height: 1;
+        }
+        
         .item-input-group {
             display: flex;
             align-items: center;
@@ -670,6 +676,17 @@
             renderDonationItems();
         }
 
+        // 项目图标映射
+        const itemIcons = {
+            'fahui': '🪷',  // 随喜法会 - 莲花
+            'gongdeng': '💡',  // 供灯 - 灯泡
+            'gongseng': '🙏',  // 供僧 - 双手合十
+            'gongzhai': '🍚',  // 供斋 - 米饭
+            'gonghuaguo': '🌸',  // 供花果 - 花朵
+            'yangong': '🔥',  // 烟供 - 火焰
+            'item_': '📦'  // 默认图标
+        };
+
         function renderDonationItems() {
             const container = document.getElementById('donationItems');
             const items = config.items || [
@@ -688,7 +705,20 @@
             
             items.forEach((item, index) => {
                 const num = numbers[index] || (index + 1);
-                html += '<div class="donation-item"><span class="item-number">' + num + '</span><span class="item-name">' + item.name + '</span><div class="item-input-group"><input type="number" class="item-input" data-item="' + item.id + '" placeholder="0" oninput="manualAdjust(this)"><span class="item-unit">尼币</span><span class="item-rmb" id="' + item.id + '-rmb">≈ ¥0</span></div></div>';
+                // 获取图标
+                let icon = itemIcons[item.id];
+                if (!icon) {
+                    // 查找默认图标
+                    for (const key in itemIcons) {
+                        if (item.id.startsWith(key)) {
+                            icon = itemIcons[key];
+                            break;
+                        }
+                    }
+                }
+                icon = icon || '📦';
+                
+                html += '<div class="donation-item"><span class="item-number">' + num + '</span><span class="item-name"><span class="item-icon">' + icon + '</span> ' + item.name + '</span><div class="item-input-group"><input type="number" class="item-input" data-item="' + item.id + '" placeholder="0" oninput="manualAdjust(this)"><span class="item-unit">尼币</span><span class="item-rmb" id="' + item.id + '-rmb">≈ ¥0</span></div></div>';
             });
             
             container.innerHTML = html;
