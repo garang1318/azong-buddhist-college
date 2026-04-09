@@ -644,21 +644,33 @@
                 console.warn('获取版本号失败:', e);
             }
 
-            // 第二步：用版本号请求配置（破除缓存）
+            // 第二步：用版本号从 GitHub 拉配置
             try {
                 const url = 'https://raw.githubusercontent.com/garang1318/azong-buddhist-college/main/config.json?v=' + (ver || Date.now());
                 const response = await fetchWithTimeout(url, 8000);
                 if (response.ok) {
                     config = await response.json();
                     applyConfig();
-                    console.log('✅ 配置加载成功');
+                    console.log('✅ GitHub 直连成功');
                     return;
                 }
             } catch (error) {
-                console.warn('GitHub 加载失败:', error.message);
+                console.warn('GitHub 加载失败，尝试备用源:', error.message);
             }
 
-            // 第三步：备用 - 本地文件
+            // 第三步：备用 - jsDelivr CDN
+            try {
+                const cdnUrl = 'https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json?timestamp=' + Date.now();
+                const cdnResp = await fetchWithTimeout(cdnUrl, 6000);
+                if (cdnResp.ok) {
+                    config = await cdnResp.json();
+                    applyConfig();
+                    console.log('✅ CDN 备用成功');
+                    return;
+                }
+            } catch(e) {}
+
+            // 第四步：本地文件
             try {
                 const response = await fetchWithTimeout('config.json?v=' + Date.now(), 3000);
                 if (response.ok) {
@@ -668,7 +680,7 @@
                     return;
                 }
             } catch (e) {}
-            
+
             // 默认配置
             config = defaultConfig;
             applyConfig();
