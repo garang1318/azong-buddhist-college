@@ -596,11 +596,11 @@
         };
 
         // 带超时的 fetch 封装（兼容微信浏览器）
-        async function fetchWithTimeout(url, timeout = 5000) {
+        async function fetchWithTimeout(url, timeout = 5000, options = {}) {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), timeout);
             try {
-                const response = await fetch(url, { signal: controller.signal });
+                const response = await fetch(url, { ...options, signal: controller.signal });
                 clearTimeout(timeoutId);
                 return response;
             } catch (error) {
@@ -631,46 +631,41 @@
         }
 
         async function loadConfig() {
-            let ver = '';
-            
-            // 第一步：获取版本号（小文件，缓存影响小）
+            // 第一步：通过 GitHub API 获取 config.json（国内稳定）
             try {
-                const verResp = await fetchWithTimeout('https://raw.githubusercontent.com/garang1318/azong-buddhist-college/main/ver.txt?_=' + Date.now(), 5000);
-                if (verResp.ok) {
-                    ver = (await verResp.text()).trim();
-                    console.log('版本号:', ver);
-                }
-            } catch(e) {
-                console.warn('获取版本号失败:', e);
-            }
-
-            // 第二步：用版本号从 GitHub 拉配置
-            try {
-                const url = 'https://raw.githubusercontent.com/garang1318/azong-buddhist-college/main/config.json?v=' + (ver || Date.now());
-                const response = await fetchWithTimeout(url, 8000);
+                const token = localStorage.getItem('github_token') || '';
+                const owner = localStorage.getItem('repo_owner') || 'garang1318';
+                const repo = localStorage.getItem('repo_name') || 'azong-buddhist-college';
+                const headers = { 'Accept': 'application/vnd.github.v3+json' };
+                if (token) headers['Authorization'] = 'token ' + token;
+                
+                const response = await fetchWithTimeout(`https://api.github.com/repos/${owner}/${repo}/contents/config.json?_=${Date.now()}`, 8000, { headers });
                 if (response.ok) {
-                    config = await response.json();
+                    const data = await response.json();
+                    config = JSON.parse(atob(data.content));
                     applyConfig();
-                    console.log('✅ GitHub 直连成功');
+                    console.log('✅ GitHub API 加载成功');
                     return;
                 }
             } catch (error) {
-                console.warn('GitHub 加载失败，尝试备用源:', error.message);
+                console.warn('GitHub API 加载失败，尝试备用源:', error.message);
             }
 
-            // 第三步：备用 - jsDelivr CDN
+            // 第二步：备用 - jsDelivr CDN（加随机参数避免缓存）
             try {
-                const cdnUrl = 'https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json?timestamp=' + Date.now();
+                const cdnUrl = 'https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json?_t=' + Date.now();
                 const cdnResp = await fetchWithTimeout(cdnUrl, 6000);
                 if (cdnResp.ok) {
                     config = await cdnResp.json();
                     applyConfig();
-                    console.log('✅ CDN 备用成功');
+                    console.log('✅ CDN 备用加载成功');
                     return;
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.warn('CDN 加载失败:', e.message);
+            }
 
-            // 第四步：本地文件
+            // 第三步：本地文件
             try {
                 const response = await fetchWithTimeout('config.json?v=' + Date.now(), 3000);
                 if (response.ok) {
@@ -684,6 +679,7 @@
             // 默认配置
             config = defaultConfig;
             applyConfig();
+            console.log('⚠️ 使用默认配置');
         }
 
         function applyConfig() {
@@ -1041,12 +1037,19 @@
             window.scrollTo(0, 0);
         }
 
-        // 启动时检查版本，有更新则自动刷新
+        // 启动时检查版本，有更新则自动刷新（使用 GitHub API，国内稳定）
         async function checkVersionAndLoad() {
             try {
-                const verResp = await fetchWithTimeout('https://raw.githubusercontent.com/garang1318/azong-buddhist-college/main/ver.txt?_=' + Date.now(), 5000);
+                const token = localStorage.getItem('github_token') || '';
+                const owner = localStorage.getItem('repo_owner') || 'garang1318';
+                const repo = localStorage.getItem('repo_name') || 'azong-buddhist-college';
+                const headers = { 'Accept': 'application/vnd.github.v3+json' };
+                if (token) headers['Authorization'] = 'token ' + token;
+
+                const verResp = await fetchWithTimeout(`https://api.github.com/repos/${owner}/${repo}/contents/ver.txt?_=${Date.now()}`, 5000, { headers });
                 if (verResp.ok) {
-                    const ver = (await verResp.text()).trim();
+                    const verData = await verResp.json();
+                    const ver = atob(verData.content).trim();
                     const savedVer = localStorage.getItem('azong_ver');
                     if (savedVer && ver !== savedVer) {
                         // 版本变了，强制刷新获取最新代码
@@ -1056,7 +1059,9 @@
                     }
                     localStorage.setItem('azong_ver', ver);
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.warn('版本检查失败:', e.message);
+            }
             // 版本检查通过，加载配置
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
