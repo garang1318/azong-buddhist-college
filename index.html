@@ -60,6 +60,23 @@
             letter-spacing: 1px;
         }
         
+        .refresh-btn {
+            margin-top: 15px;
+            padding: 8px 16px;
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        
+        .refresh-btn:active {
+            background: #e0e0e0;
+            transform: scale(0.98);
+        }
+        
         .intro-section {
             margin-bottom: 30px;
             padding-bottom: 30px;
@@ -411,6 +428,7 @@
         <header class="header">
             <h1 id="pageTitle">阿宗国际佛学院</h1>
             <p class="subtitle" id="pageSubtitle">AZONG INTERNATIONAL BUDDHIST ACADEMY</p>
+            <button id="refreshConfigBtn" class="refresh-btn">🔄 刷新配置</button>
         </header>
         
         <section class="intro-section">
@@ -631,70 +649,79 @@
         }
 
         async function loadConfig() {
-            // 检查是否需要强制刷新
-            shouldRefreshConfig();
-            
-            // 尝试多个数据源
-            const sources = [
-                // 1. 本地缓存（最快）
-                async () => {
-                    const localConfig = localStorage.getItem('azong_config');
-                    if (localConfig) {
-                        console.log('使用本地缓存配置');
-                        return JSON.parse(localConfig);
-                    }
-                    throw new Error('无本地缓存');
-                },
-                // 2. jsDelivr CDN（国内可访问，添加随机参数避免缓存）
-                async () => {
-                    const randomParam = '?t=' + Date.now() + '&v=' + Math.random().toString(36).substr(2, 9);
-                    const response = await fetchWithTimeout('https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json' + randomParam, 5000);
-                    if (!response.ok) throw new Error('CDN 加载失败');
-                    const data = await response.json();
-                    // 保存到本地缓存
-                    localStorage.setItem('azong_config', JSON.stringify(data));
-                    console.log('从 jsDelivr CDN 加载配置成功');
-                    return data;
-                },
-                // 3. 直接 GitHub Pages
-                async () => {
-                    const response = await fetchWithTimeout('config.json?t=' + Date.now(), 3000);
-                    if (!response.ok) throw new Error('GitHub Pages 加载失败');
-                    const data = await response.json();
-                    localStorage.setItem('azong_config', JSON.stringify(data));
-                    console.log('从 GitHub Pages 加载配置成功');
-                    return data;
-                },
-                // 4. GitHub API（直接从 GitHub 获取，绕过 CDN）
-                async () => {
-                    const response = await fetchWithTimeout('https://api.github.com/repos/garang1318/azong-buddhist-college/contents/config.json', 5000);
-                    if (!response.ok) throw new Error('GitHub API 加载失败');
-                    const data = await response.json();
-                    if (!data.content) throw new Error('GitHub API 无内容');
-                    const jsonContent = atob(data.content);
-                    const configData = JSON.parse(jsonContent);
-                    localStorage.setItem('azong_config', JSON.stringify(configData));
-                    console.log('从 GitHub API 加载配置成功');
-                    return configData;
-                }
-            ];
-            
-            // 依次尝试每个数据源
-            for (const source of sources) {
+            return new Promise(async (resolve, reject) => {
                 try {
-                    config = await source();
+                    // 检查是否需要强制刷新
+                    shouldRefreshConfig();
+                    
+                    // 尝试多个数据源
+                    const sources = [
+                        // 1. 本地缓存（最快）
+                        async () => {
+                            const localConfig = localStorage.getItem('azong_config');
+                            if (localConfig) {
+                                console.log('使用本地缓存配置');
+                                return JSON.parse(localConfig);
+                            }
+                            throw new Error('无本地缓存');
+                        },
+                        // 2. jsDelivr CDN（国内可访问，添加随机参数避免缓存）
+                        async () => {
+                            const randomParam = '?t=' + Date.now() + '&v=' + Math.random().toString(36).substr(2, 9);
+                            const response = await fetchWithTimeout('https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json' + randomParam, 5000);
+                            if (!response.ok) throw new Error('CDN 加载失败');
+                            const data = await response.json();
+                            // 保存到本地缓存
+                            localStorage.setItem('azong_config', JSON.stringify(data));
+                            console.log('从 jsDelivr CDN 加载配置成功');
+                            return data;
+                        },
+                        // 3. 直接 GitHub Pages
+                        async () => {
+                            const response = await fetchWithTimeout('config.json?t=' + Date.now(), 3000);
+                            if (!response.ok) throw new Error('GitHub Pages 加载失败');
+                            const data = await response.json();
+                            localStorage.setItem('azong_config', JSON.stringify(data));
+                            console.log('从 GitHub Pages 加载配置成功');
+                            return data;
+                        },
+                        // 4. GitHub API（直接从 GitHub 获取，绕过 CDN）
+                        async () => {
+                            const response = await fetchWithTimeout('https://api.github.com/repos/garang1318/azong-buddhist-college/contents/config.json', 5000);
+                            if (!response.ok) throw new Error('GitHub API 加载失败');
+                            const data = await response.json();
+                            if (!data.content) throw new Error('GitHub API 无内容');
+                            const jsonContent = atob(data.content);
+                            const configData = JSON.parse(jsonContent);
+                            localStorage.setItem('azong_config', JSON.stringify(configData));
+                            console.log('从 GitHub API 加载配置成功');
+                            return configData;
+                        }
+                    ];
+                    
+                    // 依次尝试每个数据源
+                    for (const source of sources) {
+                        try {
+                            config = await source();
+                            applyConfig();
+                            resolve(config);
+                            return;
+                        } catch (error) {
+                            console.log('数据源尝试失败:', error.message);
+                            continue;
+                        }
+                    }
+                    
+                    // 所有数据源都失败，使用默认配置
+                    console.log('所有数据源都失败，使用默认配置');
+                    config = defaultConfig;
                     applyConfig();
-                    return;
+                    resolve(config);
                 } catch (error) {
-                    console.log('数据源尝试失败:', error.message);
-                    continue;
+                    console.error('加载配置过程出错:', error);
+                    reject(error);
                 }
-            }
-            
-            // 所有数据源都失败，使用默认配置
-            console.log('所有数据源都失败，使用默认配置');
-            config = defaultConfig;
-            applyConfig();
+            });
         }
 
         function applyConfig() {
@@ -988,6 +1015,33 @@
             document.getElementById('dateInput').value = now.toISOString().slice(0, 16);
             document.getElementById('currentYear').textContent = new Date().getFullYear();
             loadConfig();
+            
+            // 绑定刷新按钮事件
+            const refreshBtn = document.getElementById('refreshConfigBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    this.textContent = '🔄 刷新中...';
+                    this.disabled = true;
+                    
+                    // 强制清除缓存并重新加载
+                    clearConfigCache();
+                    localStorage.removeItem('azong_config_last_refresh');
+                    
+                    loadConfig().then(() => {
+                        this.textContent = '✅ 已刷新';
+                        setTimeout(() => {
+                            this.textContent = '🔄 刷新配置';
+                            this.disabled = false;
+                        }, 1500);
+                    }).catch(() => {
+                        this.textContent = '❌ 刷新失败';
+                        setTimeout(() => {
+                            this.textContent = '🔄 刷新配置';
+                            this.disabled = false;
+                        }, 1500);
+                    });
+                });
+            }
         });
     </script>
 </body>
