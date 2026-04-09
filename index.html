@@ -543,16 +543,20 @@
 
         async function loadConfig() {
             try {
+                // 总是从服务器获取最新配置（添加时间戳防止缓存）
+                const response = await fetch('config.json?t=' + new Date().getTime());
+                config = await response.json();
+                applyConfig();
+            } catch (error) {
+                console.error('加载配置失败:', error);
+                // 如果服务器加载失败，尝试使用本地缓存
                 const localConfig = localStorage.getItem('azong_config');
                 if (localConfig) {
                     config = JSON.parse(localConfig);
+                    applyConfig();
                 } else {
-                    const response = await fetch('config.json?v=' + Date.now());
-                    config = await response.json();
+                    renderDonationItems();
                 }
-                applyConfig();
-            } catch (error) {
-                renderDonationItems();
             }
         }
 
