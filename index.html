@@ -632,39 +632,31 @@
 
         async function loadConfig() {
             try {
-                // 直接从 GitHub API 获取最新配置（不使用任何缓存）
-                const response = await fetchWithTimeout('https://api.github.com/repos/garang1318/azong-buddhist-college/contents/config.json', 8000);
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.content) {
-                        const jsonContent = atob(data.content);
-                        config = JSON.parse(jsonContent);
-                        applyConfig();
-                        console.log('✅ 从 GitHub API 加载最新配置成功');
-                        return;
-                    }
-                }
-                throw new Error('GitHub API 返回异常');
-            } catch (error) {
-                console.warn('GitHub API 加载失败:', error.message, '→ 尝试备用方案');
-            }
-            
-            try {
-                // 备用：jsDelivr CDN
-                const response = await fetchWithTimeout('https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json?nocache=' + Date.now(), 5000);
+                // 主要数据源：jsDelivr CDN（无 CORS 限制，国内可访问）
+                const response = await fetchWithTimeout('https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json?_=' + Date.now(), 8000);
                 if (response.ok) {
                     config = await response.json();
                     applyConfig();
-                    console.log('✅ 从 jsDelivr CDN 加载配置成功');
+                    console.log('✅ 从 CDN 加载配置成功');
                     return;
                 }
-            } catch (e) {
-                console.warn('CDN 也失败了:', e.message);
+                throw new Error('CDN 返回异常');
+            } catch (error) {
+                console.warn('CDN 加载失败:', error.message);
             }
             
-            // 最终备用：默认配置
-            console.log('⚠️ 使用内置默认配置');
+            // 备用：本地文件
+            try {
+                const response = await fetchWithTimeout('config.json?_=' + Date.now(), 3000);
+                if (response.ok) {
+                    config = await response.json();
+                    applyConfig();
+                    console.log('✅ 从本地加载配置成功');
+                    return;
+                }
+            } catch (e) {}
+            
+            // 默认配置
             config = defaultConfig;
             applyConfig();
         }
