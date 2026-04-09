@@ -959,13 +959,31 @@
             window.scrollTo(0, 0);
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        // 启动时检查版本，有更新则自动刷新
+        async function checkVersionAndLoad() {
+            try {
+                const verResp = await fetchWithTimeout('https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/ver.txt?_=' + Date.now(), 5000);
+                if (verResp.ok) {
+                    const ver = (await verResp.text()).trim();
+                    const savedVer = localStorage.getItem('azong_ver');
+                    if (savedVer && ver !== savedVer) {
+                        // 版本变了，强制刷新获取最新代码
+                        localStorage.setItem('azong_ver', ver);
+                        location.reload();
+                        return;
+                    }
+                    localStorage.setItem('azong_ver', ver);
+                }
+            } catch(e) {}
+            // 版本检查通过，加载配置
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
             document.getElementById('dateInput').value = now.toISOString().slice(0, 16);
             document.getElementById('currentYear').textContent = new Date().getFullYear();
             loadConfig();
-        });
+        }
+
+        document.addEventListener('DOMContentLoaded', checkVersionAndLoad);
     </script>
 </body>
 </html>
