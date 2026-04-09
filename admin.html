@@ -660,9 +660,10 @@
                 });
                 
                 if (response.ok) {
-                    // 保存成功后，更新本地缓存
                     localStorage.setItem('azong_config', JSON.stringify(config));
-                    showMessage('配置已成功保存到 GitHub！前台页面将使用新配置。', 'success');
+                    showMessage('正在清除CDN缓存...', 'loading');
+                    try { await fetch('https://purge.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json', { method: 'GET' }); } catch(e) {}
+                    showMessage('✅ 配置已保存！前台刷新页面即可看到最新内容。', 'success');
                 } else {
                     const error = await response.json();
                     if (response.status === 401) {
