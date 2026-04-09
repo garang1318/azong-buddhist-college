@@ -1,45 +1,40 @@
 {
-    "title": "\u963f\u5b97\u56fd\u9645\u4f5b\u5b66\u9662",
-    "subtitle": "AZONG INTERNATIONAL BUDDHIST ACADEMY",
-    "description": "\u963f\u5b97\u56fd\u9645\u4f5b\u5b66\u9662\u79c9\u627f\u85cf\u4f20\u4f5b\u6559\u6b8a\u80dc\u6cd5\u8109\uff0c\u5b9a\u671f\u4e3e\u529e\u5404\u7c7b\u6cd5\u4f1a\uff0c\u4e3a\u4f17\u751f\u7948\u798f\u6d88\u707e\u3001\u8d85\u5ea6\u4ea1\u7075\u3002\u6b22\u8fce\u5404\u754c\u5584\u4fe1\u968f\u559c\u53c2\u4e0e\uff0c\u5171\u7ed3\u5584\u7f18\uff0c\u540c\u8bc1\u83e9\u63d0\u3002\u60a8\u7684\u6bcf\u4e00\u5206\u968f\u559c\u90fd\u5c06\u7528\u4e8e\u6cd5\u4f1a\u4f9b\u54c1\u3001\u50e7\u4f17\u4f9b\u517b\u53ca\u4f5b\u5b66\u9662\u5efa\u8bbe\uff0c\u529f\u5fb7\u65e0\u91cf\u3002",
-    "exchangeRate": 18.5,
-    "currencyName": "\u5c3c\u6cca\u5c14\u5362\u6bd4",
-    "currencyCode": "NPR",
-    "items": [
-        {
-            "id": "fahui",
-            "name": "\u968f\u559c\u6cd5\u4f1a",
-            "sort": 1
-        },
-        {
-            "id": "gongdeng",
-            "name": "\u4f9b\u706f",
-            "sort": 2
-        },
-        {
-            "id": "gongseng",
-            "name": "\u4f9b\u50e7",
-            "sort": 3
-        },
-        {
-            "id": "gongzhai",
-            "name": "\u4f9b\u658b",
-            "sort": 4
-        },
-        {
-            "id": "gonghuaguo",
-            "name": "\u4f9b\u82b1\u679c",
-            "sort": 5
-        },
-        {
-            "id": "yangong",
-            "name": "\u70df\u4f9b",
-            "sort": 6
-        }
-    ],
-    "contact": {
-        "wechat": "AzongCollege",
-        "email": "info@azong.edu.np",
-        "address": "\u5c3c\u6cca\u5c14\u52a0\u5fb7\u6ee1\u90fd"
+  "title": "111阿宗国际佛学院",
+  "subtitle": "111AZONG INTERNATIONAL BUDDHIST ACADEMY",
+  "description": "阿宗国际佛学院秉承藏传佛教殊胜法脉，定期举办各类法会，为众生祈福消灾、超度亡灵。欢迎各界善信随喜参与，共结善缘，同证菩提。您的每一分随喜都将用于法会供品、僧众供养及佛学院建设，功德无量。",
+  "exchangeRate": 20,
+  "currencyName": "尼泊尔卢比",
+  "currencyCode": "NPR",
+  "items": [
+    {
+      "id": "fahui",
+      "name": "随喜法会",
+      "sort": 1
+    },
+    {
+      "id": "gongdeng",
+      "name": "供灯",
+      "sort": 2
+    },
+    {
+      "id": "gongseng",
+      "name": "供僧",
+      "sort": 3
+    },
+    {
+      "id": "gongzhai",
+      "name": "供斋",
+      "sort": 4
+    },
+    {
+      "id": "gonghuaguo",
+      "name": "供花果",
+      "sort": 5
     }
+  ],
+  "contact": {
+    "wechat": "111AzongCollege",
+    "email": "111info@azong.edu.np",
+    "address": "尼泊尔加德满都"
+  }
 }
