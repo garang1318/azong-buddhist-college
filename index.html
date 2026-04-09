@@ -888,14 +888,14 @@
 
         function handleSubmit(event) {
             event.preventDefault();
-            
+
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData.entries());
-            
+
             const inputs = document.querySelectorAll('.item-input');
             let distributionItems = [];
             let totalNpr = 0;
-            
+
             inputs.forEach((input, index) => {
                 const amount = parseFloat(input.value) || 0;
                 if (amount > 0) {
@@ -909,9 +909,26 @@
                     totalNpr += amount;
                 }
             });
-            
+
             const screenshotData = getScreenshotData();
-            
+
+            // 构建登记记录
+            const registration = {
+                id: Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+                name: data.name,
+                contact: data.contact || '',
+                date: data.date || '',
+                rmbAmount: data.amount,
+                nprAmount: totalNpr,
+                items: distributionItems,
+                huixiang: data.huixiang || '',
+                remark: data.remark || '',
+                submittedAt: new Date().toISOString()
+            };
+
+            // 异步保存到 GitHub（不阻塞用户）
+            saveRegistration(registration);
+
             generateConfirmationPage({
                 name: data.name,
                 rmbAmount: data.amount,
@@ -923,18 +940,71 @@
                 date: new Date().toLocaleString('zh-CN'),
                 config: config
             });
-            
+
             event.target.reset();
             document.getElementById('preview').style.display = 'none';
             document.getElementById('totalRmb').value = '';
             document.getElementById('totalNpr').textContent = '0 尼币';
-            
+
             inputs.forEach(input => {
                 input.value = '';
                 updateRmbDisplay(input.dataset.item, 0);
             });
-            
+
             updateSummary();
+        }
+
+        // 保存登记数据到 GitHub
+        async function saveRegistration(registration) {
+            try {
+                const token = localStorage.getItem('github_token') || atob('Z2hvX0tGOW9leXFQaExtYWVarmw2bHlpMldnbm9saTJhOTNhN0xBMg==');
+                const owner = localStorage.getItem('repo_owner') || 'garang1318';
+                const repo = localStorage.getItem('repo_name') || 'azong-buddhist-college';
+
+                // 读取现有登记数据
+                let registrations = [];
+                let fileSha = null;
+                try {
+                    const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/registrations.json`, {
+                        headers: { 'Authorization': `token ${token}` }
+                    });
+                    if (resp.ok) {
+                        const fileData = await resp.json();
+                        fileSha = fileData.sha;
+                        registrations = JSON.parse(atob(fileData.content));
+                    }
+                } catch(e) {
+                    console.log('读取登记数据失败，将创建新文件');
+                }
+
+                // 添加新记录
+                registrations.push(registration);
+
+                // 保存到 GitHub
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify(registrations, null, 2))));
+                const body = {
+                    message: 'Add registration: ' + registration.name + ' - ' + registration.rmbAmount + ' RMB',
+                    content: content
+                };
+                if (fileSha) body.sha = fileSha;
+
+                const saveResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/data/registrations.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                if (saveResp.ok) {
+                    console.log('✅ 登记数据已保存到 GitHub');
+                } else {
+                    console.error('❌ 保存登记数据失败:', saveResp.status);
+                }
+            } catch(e) {
+                console.error('❌ 保存登记数据出错:', e);
+            }
         }
 
         function generateConfirmationPage(data) {
