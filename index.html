@@ -635,7 +635,7 @@
             
             // 第一步：获取版本号（小文件，缓存影响小）
             try {
-                const verResp = await fetchWithTimeout('https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/ver.txt?_=' + Date.now(), 5000);
+                const verResp = await fetchWithTimeout('https://raw.githubusercontent.com/garang1318/azong-buddhist-college/main/ver.txt?_=' + Date.now(), 5000);
                 if (verResp.ok) {
                     ver = (await verResp.text()).trim();
                     console.log('版本号:', ver);
@@ -643,10 +643,10 @@
             } catch(e) {
                 console.warn('获取版本号失败:', e);
             }
-            
-            // 第二步：用版本号请求配置（破除CDN缓存）
+
+            // 第二步：用版本号请求配置（破除缓存）
             try {
-                const url = 'https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json?v=' + (ver || Date.now());
+                const url = 'https://raw.githubusercontent.com/garang1318/azong-buddhist-college/main/config.json?v=' + (ver || Date.now());
                 const response = await fetchWithTimeout(url, 8000);
                 if (response.ok) {
                     config = await response.json();
@@ -655,9 +655,9 @@
                     return;
                 }
             } catch (error) {
-                console.warn('CDN 加载失败:', error.message);
+                console.warn('GitHub 加载失败:', error.message);
             }
-            
+
             // 第三步：备用 - 本地文件
             try {
                 const response = await fetchWithTimeout('config.json?v=' + Date.now(), 3000);
@@ -962,7 +962,7 @@
         // 启动时检查版本，有更新则自动刷新
         async function checkVersionAndLoad() {
             try {
-                const verResp = await fetchWithTimeout('https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/ver.txt?_=' + Date.now(), 5000);
+                const verResp = await fetchWithTimeout('https://raw.githubusercontent.com/garang1318/azong-buddhist-college/main/ver.txt?_=' + Date.now(), 5000);
                 if (verResp.ok) {
                     const ver = (await verResp.text()).trim();
                     const savedVer = localStorage.getItem('azong_ver');
