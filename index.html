@@ -609,7 +609,31 @@
             }
         }
 
+        // 清除本地缓存（强制刷新）
+        function clearConfigCache() {
+            localStorage.removeItem('azong_config');
+            console.log('本地缓存已清除');
+        }
+
+        // 检查配置是否需要刷新
+        function shouldRefreshConfig() {
+            const lastRefresh = localStorage.getItem('azong_config_last_refresh');
+            const now = Date.now();
+            const oneHour = 60 * 60 * 1000;
+            
+            // 每小时强制刷新一次
+            if (!lastRefresh || (now - parseInt(lastRefresh) > oneHour)) {
+                clearConfigCache();
+                localStorage.setItem('azong_config_last_refresh', now.toString());
+                return true;
+            }
+            return false;
+        }
+
         async function loadConfig() {
+            // 检查是否需要强制刷新
+            shouldRefreshConfig();
+            
             // 尝试多个数据源
             const sources = [
                 // 1. 本地缓存（最快）
@@ -621,9 +645,10 @@
                     }
                     throw new Error('无本地缓存');
                 },
-                // 2. jsDelivr CDN（国内可访问）
+                // 2. jsDelivr CDN（国内可访问，添加随机参数避免缓存）
                 async () => {
-                    const response = await fetchWithTimeout('https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json?t=' + Date.now(), 5000);
+                    const randomParam = '?t=' + Date.now() + '&v=' + Math.random().toString(36).substr(2, 9);
+                    const response = await fetchWithTimeout('https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json' + randomParam, 5000);
                     if (!response.ok) throw new Error('CDN 加载失败');
                     const data = await response.json();
                     // 保存到本地缓存
@@ -639,6 +664,18 @@
                     localStorage.setItem('azong_config', JSON.stringify(data));
                     console.log('从 GitHub Pages 加载配置成功');
                     return data;
+                },
+                // 4. GitHub API（直接从 GitHub 获取，绕过 CDN）
+                async () => {
+                    const response = await fetchWithTimeout('https://api.github.com/repos/garang1318/azong-buddhist-college/contents/config.json', 5000);
+                    if (!response.ok) throw new Error('GitHub API 加载失败');
+                    const data = await response.json();
+                    if (!data.content) throw new Error('GitHub API 无内容');
+                    const jsonContent = atob(data.content);
+                    const configData = JSON.parse(jsonContent);
+                    localStorage.setItem('azong_config', JSON.stringify(configData));
+                    console.log('从 GitHub API 加载配置成功');
+                    return configData;
                 }
             ];
             
