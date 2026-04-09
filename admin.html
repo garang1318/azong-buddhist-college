@@ -420,15 +420,14 @@
         
         // 页面加载时恢复保存的认证信息
         document.addEventListener('DOMContentLoaded', function() {
-            // 使用预配置的 Token（已加密）
-            const defaultToken = atob('Z2hvX2tGOW9leXFQaExtYWVarmw2bHlpMldnbm9saTJhOTNhN0xBMg==');
-            
+            // 从 localStorage 读取 Token，如果没有则提示用户设置
             if (githubToken) {
                 document.getElementById('githubToken').value = githubToken;
+                document.getElementById('tokenStatus').textContent = '✅ Token 已设置';
+                document.getElementById('tokenStatus').style.color = '#28a745';
             } else {
-                document.getElementById('githubToken').value = defaultToken;
-                localStorage.setItem('github_token', defaultToken);
-                githubToken = defaultToken;
+                document.getElementById('tokenStatus').textContent = '⚠️ 请在下方输入 GitHub Token';
+                document.getElementById('tokenStatus').style.color = '#dc3545';
             }
             
             document.getElementById('repoOwner').value = repoOwner;
