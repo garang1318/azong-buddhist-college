@@ -609,27 +609,6 @@
             }
         }
 
-        // 清除本地缓存（强制刷新）
-        function clearConfigCache() {
-            localStorage.removeItem('azong_config');
-            console.log('本地缓存已清除');
-        }
-
-        // 检查配置是否需要刷新
-        function shouldRefreshConfig() {
-            const lastRefresh = localStorage.getItem('azong_config_last_refresh');
-            const now = Date.now();
-            const oneHour = 60 * 60 * 1000;
-            
-            // 每小时强制刷新一次
-            if (!lastRefresh || (now - parseInt(lastRefresh) > oneHour)) {
-                clearConfigCache();
-                localStorage.setItem('azong_config_last_refresh', now.toString());
-                return true;
-            }
-            return false;
-        }
-
         async function loadConfig() {
             // 第一步：通过 GitHub API 获取 config.json（国内稳定）
             try {
@@ -1037,40 +1016,14 @@
             window.scrollTo(0, 0);
         }
 
-        // 启动时检查版本，有更新则自动刷新（使用 GitHub API，国内稳定）
-        async function checkVersionAndLoad() {
-            try {
-                const token = localStorage.getItem('github_token') || '';
-                const owner = localStorage.getItem('repo_owner') || 'garang1318';
-                const repo = localStorage.getItem('repo_name') || 'azong-buddhist-college';
-                const headers = { 'Accept': 'application/vnd.github.v3+json' };
-                if (token) headers['Authorization'] = 'token ' + token;
-
-                const verResp = await fetchWithTimeout(`https://api.github.com/repos/${owner}/${repo}/contents/ver.txt?_=${Date.now()}`, 5000, { headers });
-                if (verResp.ok) {
-                    const verData = await verResp.json();
-                    const ver = atob(verData.content).trim();
-                    const savedVer = localStorage.getItem('azong_ver');
-                    if (savedVer && ver !== savedVer) {
-                        // 版本变了，强制刷新获取最新代码
-                        localStorage.setItem('azong_ver', ver);
-                        location.reload();
-                        return;
-                    }
-                    localStorage.setItem('azong_ver', ver);
-                }
-            } catch(e) {
-                console.warn('版本检查失败:', e.message);
-            }
-            // 版本检查通过，加载配置
+        // 启动时加载配置（配置已通过 GitHub API 实时获取，无需版本检查）
+        document.addEventListener('DOMContentLoaded', function() {
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
             document.getElementById('dateInput').value = now.toISOString().slice(0, 16);
             document.getElementById('currentYear').textContent = new Date().getFullYear();
             loadConfig();
-        }
-
-        document.addEventListener('DOMContentLoaded', checkVersionAndLoad);
+        });
     </script>
 </body>
 </html>
