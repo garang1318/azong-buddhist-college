@@ -521,9 +521,24 @@
             }
         }
 
-        // 加载配置（从 GitHub API 获取最新配置）
+        // 加载配置（CDN 优先，确保国内可访问）
         async function loadConfig() {
-            // 第一步：通过 GitHub API 获取 config.json（确保拿到最新数据）
+            // 第一步：jsDelivr CDN（国内最稳定）
+            try {
+                const cdnUrl = 'https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json?_t=' + Date.now();
+                const cdnResp = await fetchWithTimeout(cdnUrl, 6000);
+                if (cdnResp.ok) {
+                    config = await cdnResp.json();
+                    fillForm();
+                    renderItems();
+                    console.log('✅ 管理后台：CDN 加载配置成功');
+                    return;
+                }
+            } catch(e) {
+                console.warn('CDN 加载失败，尝试备用源:', e.message);
+            }
+
+            // 第二步：GitHub API 备用
             try {
                 const token = localStorage.getItem('github_token') || '';
                 const owner = localStorage.getItem('repo_owner') || 'garang1318';
@@ -537,26 +552,11 @@
                     config = JSON.parse(atob(data.content));
                     fillForm();
                     renderItems();
-                    console.log('✅ 管理后台：从 GitHub API 加载最新配置成功');
+                    console.log('✅ 管理后台：GitHub API 备用加载成功');
                     return;
                 }
             } catch (error) {
-                console.warn('GitHub API 加载失败，尝试备用源:', error.message);
-            }
-
-            // 第二步：备用 - jsDelivr CDN
-            try {
-                const cdnUrl = 'https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json?_t=' + Date.now();
-                const cdnResp = await fetchWithTimeout(cdnUrl, 6000);
-                if (cdnResp.ok) {
-                    config = await cdnResp.json();
-                    fillForm();
-                    renderItems();
-                    console.log('✅ 管理后台：从 CDN 加载配置成功');
-                    return;
-                }
-            } catch(e) {
-                console.warn('CDN 加载失败:', e.message);
+                console.warn('GitHub API 加载失败:', error.message);
             }
 
             // 第三步：本地文件（最后手段）
