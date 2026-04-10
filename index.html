@@ -608,7 +608,21 @@
         }
 
         async function loadConfig() {
-            // 第一步：通过 GitHub API 获取 config.json（国内稳定）
+            // 第一步：jsDelivr CDN（国内最稳定，加随机参数避免缓存）
+            try {
+                const cdnUrl = 'https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json?_t=' + Date.now();
+                const cdnResp = await fetchWithTimeout(cdnUrl, 6000);
+                if (cdnResp.ok) {
+                    config = await cdnResp.json();
+                    applyConfig();
+                    console.log('✅ CDN 加载配置成功');
+                    return;
+                }
+            } catch(e) {
+                console.warn('CDN 加载失败，尝试备用源:', e.message);
+            }
+
+            // 第二步：GitHub API 备用（需要网络能访问 GitHub）
             try {
                 const token = localStorage.getItem('github_token') || '';
                 const owner = localStorage.getItem('repo_owner') || 'garang1318';
@@ -621,28 +635,14 @@
                     const data = await response.json();
                     config = JSON.parse(atob(data.content));
                     applyConfig();
-                    console.log('✅ GitHub API 加载成功');
+                    console.log('✅ GitHub API 备用加载成功');
                     return;
                 }
             } catch (error) {
-                console.warn('GitHub API 加载失败，尝试备用源:', error.message);
+                console.warn('GitHub API 加载失败:', error.message);
             }
 
-            // 第二步：备用 - jsDelivr CDN（加随机参数避免缓存）
-            try {
-                const cdnUrl = 'https://cdn.jsdelivr.net/gh/garang1318/azong-buddhist-college@main/config.json?_t=' + Date.now();
-                const cdnResp = await fetchWithTimeout(cdnUrl, 6000);
-                if (cdnResp.ok) {
-                    config = await cdnResp.json();
-                    applyConfig();
-                    console.log('✅ CDN 备用加载成功');
-                    return;
-                }
-            } catch(e) {
-                console.warn('CDN 加载失败:', e.message);
-            }
-
-            // 第三步：本地文件
+            // 第三步：本地文件（Vercel 部署的版本）
             try {
                 const response = await fetchWithTimeout('config.json?v=' + Date.now(), 3000);
                 if (response.ok) {
