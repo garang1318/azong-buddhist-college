@@ -1,1 +1,1 @@
-{'title':'快速测试1','subtitle':'Q1','description':'快速第1轮','exchangeRate':10,'currencyName':'T','currencyCode':'T','items':[{'id':'t','name':'项目','sort':1}],'contact':{'wechat':'t','email':'t','address':'t'}}
+{'title':'快速测试2','subtitle':'Q2','description':'快速第2轮','exchangeRate':20,'currencyName':'T','currencyCode':'T','items':[{'id':'t','name':'项目','sort':1}],'contact':{'wechat':'t','email':'t','address':'t'}}
